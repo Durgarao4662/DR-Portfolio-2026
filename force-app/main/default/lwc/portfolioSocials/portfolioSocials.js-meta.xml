@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="linkedInUrl" type="String"
+                label="LinkedIn Profile URL"
+                description="Full LinkedIn profile URL"/>
+            <property name="trailheadUrl" type="String"
+                label="Trailhead Profile URL"
+                description="Full Trailhead profile URL"/>
+            <property name="instagramUrl" type="String"
+                label="Instagram Profile URL"
+                description="Full Instagram profile URL"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

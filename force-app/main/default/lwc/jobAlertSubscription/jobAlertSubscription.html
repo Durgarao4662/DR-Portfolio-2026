@@ -1,0 +1,44 @@
+<!-- jobAlertSubscription.html -->
+<template>
+  <lightning-card title="Job Alert Subscription" icon-name="standard:job_position">
+    <div class="slds-p-around_medium card-body">
+      <!-- Success Message -->
+      <template if:true={isSuccess}>
+        <div class="slds-notify slds-notify_alert slds-theme_success">
+          <p>Subscription created! Check your email for job alerts.</p>
+        </div>
+      </template>
+      <!-- Email Input -->
+      <lightning-input type="email" label="Email Address"
+        placeholder="Enter your email" value={email}
+        onchange={handleEmailChange} required>
+      </lightning-input>
+      <!-- Frequency Selector -->
+      <lightning-combobox label="Alert Frequency"
+        value={frequency} options={frequencyOptions}
+        onchange={handleFrequencyChange} required>
+      </lightning-combobox>
+      <!-- Resume Upload -->
+  <!-- Replace with this standard HTML input -->
+<label class="slds-form-element__label">Upload Resume (PDF / DOC)</label>
+<div class="slds-form-element__control">
+    <input  type="file"
+            class="file-input"
+            accept=".pdf,.doc,.docx"
+            onchange={handleFileChange} />
+</div>
+<template if:true={fileName}>
+    <p class="slds-text-color_success">Selected: {fileName}</p>
+</template>
+      <!-- Submit -->
+      <div class="slds-m-top_medium">
+        <lightning-button variant="brand" label="Submit"
+          onclick={handleSubmit} disabled={isLoading}>
+        </lightning-button>
+        <template if:true={isLoading}>
+          <lightning-spinner size="small"></lightning-spinner>
+        </template>
+      </div>
+    </div>
+  </lightning-card>
+</template>

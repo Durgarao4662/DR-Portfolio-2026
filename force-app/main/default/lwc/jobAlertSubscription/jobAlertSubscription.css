@@ -1,0 +1,12 @@
+/* jobAlertSubscription.css */
+.card-body {
+  background: #f8fafd;
+  border-radius: 8px;
+}
+lightning-input, lightning-combobox, lightning-file-upload {
+  display: block;
+  margin-bottom: 1rem;
+}
+lightning-button {
+  margin-right: 0.5rem;
+}

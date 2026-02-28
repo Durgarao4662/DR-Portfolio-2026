@@ -1,0 +1,188 @@
+<!-- submitRequest.html -->
+<template>
+    <div class="sr-root">
+
+        <!-- ══════════════════════════════════════════
+             TRIGGER BUTTON
+             ══════════════════════════════════════════ -->
+        <div class="btn-outer">
+            <button class="trigger-btn" onclick={openModal} aria-haspopup="dialog">
+                <span class="trigger-glow"  aria-hidden="true"></span>
+                <span class="trigger-inner">
+                    <span class="trigger-rocket" aria-hidden="true">🚀</span>
+                    <span class="trigger-label">Submit a Request</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- ══════════════════════════════════════════
+             MODAL — backdrop + card
+             ══════════════════════════════════════════ -->
+        <template lwc:if={showModal}>
+            <div class="backdrop" role="dialog" aria-modal="true" aria-labelledby="dlg-title">
+
+                <!-- Clicking the dim area closes modal -->
+                <div class="backdrop-dim" onclick={closeModal}></div>
+
+                <div class="modal-card">
+
+                    <!-- ── Header ── -->
+                    <div class="modal-hdr">
+                        <div class="modal-hdr-icon">
+                            <span class="hdr-icon-emoji">📬</span>
+                        </div>
+                        <div class="modal-hdr-text">
+                            <h2 class="modal-title" id="dlg-title">Submit a Request</h2>
+                            <p class="modal-subtitle">We'll reach out to you shortly</p>
+                        </div>
+                        <button class="close-btn" onclick={closeModal} aria-label="Close dialog">✕</button>
+                    </div>
+
+                    <!-- ── Body / Form ── -->
+                    <div class="modal-body">
+
+                        <!-- REQUEST TYPE -->
+                        <div class="field-wrap">
+                            <label class="field-label" for="fld-type">
+                                Request Type <span class="req-star" aria-hidden="true">*</span>
+                            </label>
+                            <div class="select-shell" style={typeShellStyle}>
+                                <select
+                                    id="fld-type"
+                                    class="field-select"
+                                    onchange={onTypeChange}
+                                    value={requestType}
+                                >
+                                    <option value="">— Choose a type —</option>
+                                    <template for:each={typeOptions} for:item="t">
+                                        <option key={t.v} value={t.v}>{t.l}</option>
+                                    </template>
+                                </select>
+                                <span class="select-chevron" aria-hidden="true">▾</span>
+                            </div>
+                            <template lwc:if={typeErr}>
+                                <p class="field-err" role="alert">⚠ {typeErr}</p>
+                            </template>
+                        </div>
+
+                        <!-- EMAIL -->
+                        <div class="field-wrap">
+                            <label class="field-label" for="fld-email">
+                                Email Address <span class="req-star" aria-hidden="true">*</span>
+                            </label>
+                            <div class="input-shell" style={emailShellStyle}>
+                                <span class="input-prefix-icon" aria-hidden="true">✉</span>
+                                <input
+                                    type="email"
+                                    id="fld-email"
+                                    class="field-input"
+                                    placeholder="your@email.com"
+                                    value={email}
+                                    oninput={onEmailInput}
+                                    onblur={onEmailBlur}
+                                    required
+                                    aria-required="true"
+                                />
+                            </div>
+                            <template lwc:if={emailErr}>
+                                <p class="field-err" role="alert">⚠ {emailErr}</p>
+                            </template>
+                        </div>
+
+                        <!-- COMMENT -->
+                        <div class="field-wrap">
+                            <label class="field-label" for="fld-comment">
+                                Message / Comment
+                                <span class="optional-tag">(optional)</span>
+                            </label>
+                            <textarea
+                                id="fld-comment"
+                                class="field-textarea"
+                                placeholder="Tell us more about your request…"
+                                oninput={onCommentInput}
+                                maxlength="1000"
+                                rows="4"
+                            ></textarea>
+                            <span class="char-count">{charCount} / 1000</span>
+                        </div>
+
+                        <!-- SUBMIT ERROR -->
+                        <template lwc:if={submitErr}>
+                            <div class="submit-err-box" role="alert">
+                                ⚠️ {submitErr}
+                            </div>
+                        </template>
+
+                    </div>
+
+                    <!-- ── Footer ── -->
+                    <div class="modal-ftr">
+                        <button class="btn-cancel" onclick={closeModal}>Cancel</button>
+
+                        <button
+                            class={sendBtnClass}
+                            onclick={onSend}
+                            disabled={isSending}
+                            aria-label="Send request"
+                        >
+                            <template lwc:if={isSending}>
+                                <span class="send-spinner" aria-hidden="true"></span>
+                                <span class="send-txt">Launching…</span>
+                            </template>
+                            <template lwc:else>
+                                <span class="send-paper-rocket" aria-hidden="true">🚀</span>
+                                <span class="send-txt">Send</span>
+                                <span class="send-trail" aria-hidden="true"></span>
+                            </template>
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </template>
+
+        <!-- ══════════════════════════════════════════
+             ROCKET LAUNCH SCREEN — full-page overlay
+             ══════════════════════════════════════════ -->
+        <template lwc:if={showRocket}>
+            <div class="rocket-stage" aria-hidden="true">
+
+                <!-- Starburst background rings -->
+                <div class="star-ring sr1"></div>
+                <div class="star-ring sr2"></div>
+                <div class="star-ring sr3"></div>
+
+                <!-- Confetti dots -->
+                <span class="confetti c1"></span>
+                <span class="confetti c2"></span>
+                <span class="confetti c3"></span>
+                <span class="confetti c4"></span>
+                <span class="confetti c5"></span>
+                <span class="confetti c6"></span>
+                <span class="confetti c7"></span>
+                <span class="confetti c8"></span>
+                <span class="confetti c9"></span>
+                <span class="confetti c10"></span>
+                <span class="confetti c11"></span>
+                <span class="confetti c12"></span>
+
+                <!-- The orbiting rocket -->
+                <div class="orbit-track">
+                    <div class="orbit-arm">
+                        <span class="big-rocket">🚀</span>
+                        <span class="rocket-exhaust"></span>
+                    </div>
+                </div>
+
+                <!-- Centre success message -->
+                <div class="launch-msg">
+                    <span class="lm-check">✓</span>
+                    <p class="lm-title">Request Sent!</p>
+                    <p class="lm-sub">We'll be in touch soon 🎉</p>
+                </div>
+
+            </div>
+        </template>
+
+    </div>
+</template>

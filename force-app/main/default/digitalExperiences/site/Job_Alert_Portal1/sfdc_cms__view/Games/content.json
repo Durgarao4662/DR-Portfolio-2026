@@ -1,0 +1,67 @@
+{
+  "type" : "sfdc_cms__view",
+  "title" : "Games",
+  "contentBody" : {
+    "component" : {
+      "children" : [ {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"d32c96e8-c435-4a8b-bc5b-434d6b655c43\",\"columns\":[{\"UUID\":\"438424f6-0f98-4b14-8b34-401569d87e53\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : { },
+              "definition" : "c:portfolioGames",
+              "id" : "92ccaae5-4974-47c6-b486-a82bf88a9274",
+              "type" : "component"
+            } ],
+            "id" : "438424f6-0f98-4b14-8b34-401569d87e53",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "d32c96e8-c435-4a8b-bc5b-434d6b655c43",
+          "type" : "component"
+        } ],
+        "id" : "81e2a3a3-de3c-4e73-b34b-4fecdb47f5e3",
+        "name" : "content",
+        "title" : "Content",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "customHeadTags" : "",
+            "description" : "",
+            "pageTitle" : "Games",
+            "recordId" : "{!recordId}"
+          },
+          "definition" : "community_builder:seoAssistant",
+          "id" : "e358b4f7-792b-4176-98cf-cb354ab2cb8c",
+          "type" : "component"
+        } ],
+        "id" : "4730d929-4cc2-4e3a-b8e4-a98c7fa90457",
+        "name" : "sfdcHiddenRegion",
+        "title" : "sfdcHiddenRegion",
+        "type" : "region"
+      } ],
+      "definition" : "community_layout:sldsFlexibleLayout",
+      "id" : "5276fd1c-16a0-4928-a4a3-5fb51e315994",
+      "type" : "component"
+    },
+    "dataProviders" : [ ],
+    "themeLayoutType" : "Inner",
+    "viewType" : "custom-games"
+  },
+  "urlName" : "games"
+}

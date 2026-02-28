@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Salesforce Data Cloud Consultant</label>
+    <protected>false</protected>
+    <values>
+        <field>Badge_Color__c</field>
+        <value xsi:type="xsd:string">#032D60</value>
+    </values>
+    <values>
+        <field>Cert_Name__c</field>
+        <value xsi:type="xsd:string">Salesforce Data Cloud Consultant</value>
+    </values>
+    <values>
+        <field>Cert_URL__c</field>
+        <value xsi:type="xsd:string">https://trailhead.salesforce.com/en/credentials/verification/</value>
+    </values>
+    <values>
+        <field>Credential_ID__c</field>
+        <value xsi:type="xsd:string">3789512</value>
+    </values>
+    <values>
+        <field>Issue_Date__c</field>
+        <value xsi:type="xsd:string">Nov 2023</value>
+    </values>
+    <values>
+        <field>Issuer__c</field>
+        <value xsi:type="xsd:string">Salesforce</value>
+    </values>
+    <values>
+        <field>Logo_URL__c</field>
+        <value xsi:type="xsd:string">https://abhimanyud3dx.github.io/superqbit-static-resources/resources/images/cert/Data.Cloud.Consultant.png</value>
+    </values>
+    <values>
+        <field>Sort_Order__c</field>
+        <value xsi:type="xsd:double">3.0</value>
+    </values>
+</CustomMetadata>

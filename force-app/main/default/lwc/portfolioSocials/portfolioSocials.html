@@ -1,0 +1,25 @@
+<template>
+  <section class="socials-section">
+    <div class="section-header">
+      <h2 class="section-title">Connect With Me</h2>
+      <p class="section-sub">Find me on these platforms</p>
+    </div>
+    <div class="socials-grid">
+      <template for:each={socialCards} for:item="card">
+        <div key={card.id} class="social-card" style={card.cardStyle}>
+          <div class="icon-ring" style={card.iconRingStyle}>
+            <span class="platform-icon">{card.icon}</span>
+          </div>
+          <h3 class="platform-name">{card.platform}</h3>
+          <p class="platform-handle">{card.handle}</p>
+          <p class="platform-desc">{card.description}</p>
+          <a href={card.url} target="_blank" rel="noopener noreferrer"
+             class="social-btn" style={card.btnStyle}
+             onclick={trackClick} data-platform={card.platform}>
+            {card.cta} ↗
+          </a>
+        </div>
+      </template>
+    </div>
+  </section>
+</template>

@@ -1,0 +1,47 @@
+<template>
+  <!-- Wrapper — positions the custom FAB over the Salesforce default button -->
+  <div class="agent-fab-wrapper">
+
+    <!-- Tooltip (shown on hover) -->
+    <template lwc:if={showTooltip}>
+      <div class="agent-tooltip" role="tooltip" id="agent-tip">
+        <span class="tooltip-icon">🤖</span>
+        <span class="tooltip-text">{welcomeHint}</span>
+        <button class="tooltip-close"
+                onclick={dismissTooltip}
+                aria-label="Dismiss tooltip">✕</button>
+      </div>
+    </template>
+
+    <!-- Unread badge -->
+    <template lwc:if={hasUnread}>
+      <span class="unread-badge" aria-label={unreadLabel}>
+        {unreadCount}
+      </span>
+    </template>
+
+    <!-- Main FAB button -->
+    <button
+      class={fabClass}
+      onclick={toggleChat}
+      aria-label={fabAriaLabel}
+      aria-expanded={isChatOpen}
+      title={agentName}
+    >
+      <!-- Bot icon (chat closed) -->
+      <template lwc:if={showBotIcon}>
+        <span class="fab-icon fab-icon--bot" aria-hidden="true">🤖</span>
+      </template>
+      <!-- Close icon (chat open) -->
+      <template lwc:else>
+        <span class="fab-icon fab-icon--close" aria-hidden="true">✕</span>
+      </template>
+    </button>
+
+    <!-- Pulse ring animation (hidden when chat is open) -->
+    <template lwc:if={showPulse}>
+      <div class="pulse-ring" aria-hidden="true"></div>
+    </template>
+
+  </div>
+</template>

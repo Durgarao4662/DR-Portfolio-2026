@@ -1,0 +1,48 @@
+<!-- portfolioGames.html -->
+<template>
+    <section class="games-section">
+
+        <div class="section-header">
+            <h2 class="section-title">🎮 Games Lab</h2>
+            <p class="section-sub">Interactive LWC-powered mini-games</p>
+        </div>
+
+        <div class="games-grid">
+            <template for:each={games} for:item="game">
+                <div key={game.id} class="game-card" style={game.cardStyle}>
+
+                    <div class="game-emoji">{game.emoji}</div>
+
+                    <span class="difficulty-badge" style={game.badgeStyle}>
+                        {game.difficulty}
+                    </span>
+
+                    <h3 class="game-title">{game.title}</h3>
+                    <p class="game-desc">{game.description}</p>
+
+                    <div class="game-tags">
+                        <template for:each={game.tags} for:item="tag">
+                            <span key={tag} class="game-tag">{tag}</span>
+                        </template>
+                    </div>
+
+                    <!-- Separate buttons for available vs coming soon — no ternary needed -->
+                    <template lwc:if={game.comingSoon}>
+                        <button class="play-btn play-btn--disabled" disabled>
+                            🔜 Coming Soon
+                        </button>
+                    </template>
+                    <template lwc:else>
+                        <button class="play-btn"
+                                onclick={navigateToGame}
+                                data-page={game.pageApiName}>
+                            ▶ Play Now
+                        </button>
+                    </template>
+
+                </div>
+            </template>
+        </div>
+
+    </section>
+</template>

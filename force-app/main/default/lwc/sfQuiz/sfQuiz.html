@@ -1,0 +1,180 @@
+<!-- sfQuiz.html -->
+<template>
+    <div class="quiz-shell">
+
+        <!-- Particle field background -->
+        <div class="particles" aria-hidden="true">
+            <span class="p p1"></span><span class="p p2"></span>
+            <span class="p p3"></span><span class="p p4"></span>
+            <span class="p p5"></span><span class="p p6"></span>
+        </div>
+
+        <!-- ══ SCREEN: START ══ -->
+        <template lwc:if={showStart}>
+            <div class="screen screen--start">
+                <div class="start-logo">
+                    <span class="logo-bolt">⚡</span>
+                    <h1 class="logo-title">Salesforce<span class="logo-accent">Quiz</span></h1>
+                    <p class="logo-sub">Test your Salesforce mastery</p>
+                </div>
+
+                <div class="category-grid">
+                    <template for:each={categories} for:item="cat">
+                        <button
+                            key={cat.id}
+                            class={cat.btnClass}
+                            onclick={selectCategory}
+                            data-id={cat.id}
+                            style={cat.accentStyle}
+                        >
+                            <span class="cat-icon">{cat.icon}</span>
+                            <span class="cat-name">{cat.name}</span>
+                            <span class="cat-count">{cat.count} questions</span>
+                        </button>
+                    </template>
+                </div>
+
+                <div class="difficulty-row">
+                    <span class="diff-label">Difficulty:</span>
+                    <button class={easyClass}   onclick={setEasy}   >⭐ Easy</button>
+                    <button class={mediumClass} onclick={setMedium} >⭐⭐ Medium</button>
+                    <button class={hardClass}   onclick={setHard}   >⭐⭐⭐ Hard</button>
+                </div>
+
+                <button class="btn-start" onclick={startQuiz}>
+                    <span>Start Quiz</span>
+                    <span class="btn-arrow">→</span>
+                </button>
+            </div>
+        </template>
+
+        <!-- ══ SCREEN: QUESTION ══ -->
+        <template lwc:if={showQuestion}>
+            <div class="screen screen--question">
+
+                <!-- Top bar -->
+                <div class="q-topbar">
+                    <div class="q-progress-wrap">
+                        <div class="q-progress-track">
+                            <div class="q-progress-fill" style={progressStyle}></div>
+                        </div>
+                        <span class="q-counter">{questionCounter}</span>
+                    </div>
+                    <div class="q-score-chip">
+                        <span class="score-icon">⚡</span>
+                        <span class="score-val">{score}</span>
+                    </div>
+                </div>
+
+                <!-- Timer ring -->
+                <div class="timer-wrap">
+                    <svg class="timer-ring" viewBox="0 0 80 80">
+                        <circle class="timer-track" cx="40" cy="40" r="34"/>
+                        <circle class="timer-arc"   cx="40" cy="40" r="34"
+                                style={timerArcStyle}/>
+                    </svg>
+                    <span class="timer-num" style={timerNumStyle}>{timeLeft}</span>
+                </div>
+
+                <!-- Category tag -->
+                <div class="q-category-tag" style={catTagStyle}>
+                    {currentCategory}
+                </div>
+
+                <!-- Question text -->
+                <div class="q-card">
+                    <p class="q-text">{currentQuestion.text}</p>
+                </div>
+
+                <!-- Options -->
+                <div class="options-grid">
+                    <template for:each={currentOptions} for:item="opt">
+                        <button
+                            key={opt.id}
+                            class={opt.btnClass}
+                            onclick={selectAnswer}
+                            data-idx={opt.idx}
+                            disabled={answered}
+                        >
+                            <span class="opt-letter">{opt.letter}</span>
+                            <span class="opt-text">{opt.text}</span>
+                            <template lwc:if={opt.showCorrect}>
+                                <span class="opt-badge opt-badge--correct">✓</span>
+                            </template>
+                            <template lwc:if={opt.showWrong}>
+                                <span class="opt-badge opt-badge--wrong">✕</span>
+                            </template>
+                        </button>
+                    </template>
+                </div>
+
+                <!-- Feedback banner -->
+                <template lwc:if={answered}>
+                    <div class={feedbackClass}>
+                        <span class="fb-icon">{feedbackIcon}</span>
+                        <span class="fb-text">{feedbackText}</span>
+                        <button class="btn-next" onclick={nextQuestion}>
+                            {nextLabel} →
+                        </button>
+                    </div>
+                </template>
+
+            </div>
+        </template>
+
+        <!-- ══ SCREEN: RESULTS ══ -->
+        <template lwc:if={showResults}>
+            <div class="screen screen--results">
+
+                <div class="result-trophy">{trophyEmoji}</div>
+                <h2 class="result-title">{resultTitle}</h2>
+                <p class="result-sub">{resultSub}</p>
+
+                <div class="result-score-ring">
+                    <svg viewBox="0 0 140 140" class="score-ring-svg">
+                        <circle class="score-ring-track" cx="70" cy="70" r="58"/>
+                        <circle class="score-ring-fill"  cx="70" cy="70" r="58"
+                                style={scoreRingStyle}/>
+                    </svg>
+                    <div class="score-ring-inner">
+                        <span class="score-pct">{scorePercent}%</span>
+                        <span class="score-fraction">{score}/{maxScore}</span>
+                    </div>
+                </div>
+
+                <div class="result-stats">
+                    <div class="rs-stat">
+                        <span class="rs-val rs-val--green">{correctCount}</span>
+                        <span class="rs-lbl">Correct</span>
+                    </div>
+                    <div class="rs-divider"></div>
+                    <div class="rs-stat">
+                        <span class="rs-val rs-val--red">{wrongCount}</span>
+                        <span class="rs-lbl">Wrong</span>
+                    </div>
+                    <div class="rs-divider"></div>
+                    <div class="rs-stat">
+                        <span class="rs-val rs-val--gold">{streakBest}</span>
+                        <span class="rs-lbl">Best Streak</span>
+                    </div>
+                </div>
+
+                <div class="result-badge-row">
+                    <template for:each={earnedBadges} for:item="badge">
+                        <div key={badge.id} class="earned-badge">
+                            <span class="eb-icon">{badge.icon}</span>
+                            <span class="eb-name">{badge.name}</span>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="result-btns">
+                    <button class="btn-start" onclick={restartQuiz}>↺ Play Again</button>
+                    <button class="btn-outline" onclick={goHome}>⌂ Categories</button>
+                </div>
+
+            </div>
+        </template>
+
+    </div>
+</template>

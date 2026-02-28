@@ -1,0 +1,5 @@
+{
+  "apiName" : "Salesforce_Quiz",
+  "type" : "sfdc_cms__view",
+  "path" : "views"
+}

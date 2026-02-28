@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Soql Snake",
+  "contentBody" : {
+    "activeViewId" : "Soql_Snake",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-soql-snake",
+    "urlPrefix" : "soql-snake"
+  },
+  "urlName" : "soql-snake"
+}

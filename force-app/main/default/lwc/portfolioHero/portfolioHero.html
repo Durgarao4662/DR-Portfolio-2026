@@ -1,0 +1,76 @@
+<!-- portfolioHero.html -->
+<template>
+    <section class="hero-container">
+
+        <!-- Animated gradient background -->
+        <div class="hero-bg"></div>
+
+        <!-- Floating decorative orbs -->
+        <div class="hero-orbs" aria-hidden="true">
+            <span class="orb orb-1"></span>
+            <span class="orb orb-2"></span>
+            <span class="orb orb-3"></span>
+        </div>
+
+        <div class="hero-inner">
+
+            <!-- ① CIRCULAR PROFILE IMAGE -->
+            <div class="avatar-wrapper">
+                <div class="avatar-glow-ring">
+                    <div class="avatar-border">
+                        <img
+                            src={profileImageUrl}
+                            alt="Durgarao Telagareddi - Senior Salesforce Developer"
+                            class="avatar-img"
+                            loading="eager"
+                        />
+                    </div>
+                </div>
+                <span class="exp-badge">{yearsExp}+ yrs</span>
+            </div>
+
+            <!-- ② HERO TEXT -->
+            <div class="hero-text">
+
+                <p class="hero-eyebrow">👋 Welcome to my portfolio</p>
+                <h1 class="hero-name"></h1>
+                <h2 class="hero-title">{profileTitle}</h2>
+
+                <p class="hero-meta">
+                    📍 {location} &nbsp;·&nbsp;
+                    <a href="mailto:{email}" class="hero-email">{email}</a>
+                </p>
+
+                <!-- ③ PROFILE SUMMARY -->
+                <div class="summary-card">
+                    <p class="summary-text">{profileSummary}</p>
+                    <div class="summary-stats">
+                        <template for:each={stats} for:item="stat">
+                            <div key={stat.id} class="summary-stat">
+                                <span class="stat-number">{stat.value}</span>
+                                <span class="stat-label">{stat.label}</span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <!-- ④ CTA BUTTONS -->
+                <div class="hero-ctas">
+                    <a
+                        href={resumeUrl}
+                        class="btn-download"
+                        download="Durgarao_Telagareddi_Resume.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        ⬇&nbsp; Download Resume
+                    </a>
+                    <a href="/projects" class="btn-projects">
+                        View Projects &nbsp;→
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+</template>

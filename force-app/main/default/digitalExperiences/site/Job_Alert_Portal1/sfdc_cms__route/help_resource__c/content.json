@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Help Resource",
+  "contentBody" : {
+    "activeViewId" : "Help_Resource",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-help-resource",
+    "urlPrefix" : "help-resource"
+  },
+  "urlName" : "help-resource"
+}

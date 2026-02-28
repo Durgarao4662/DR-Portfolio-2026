@@ -1,0 +1,73 @@
+<template>
+  <section class="projects-section">
+
+    <div class="section-header">
+      <h2 class="section-title">Key Projects</h2>
+      <p class="section-sub">Enterprise Salesforce solutions delivered globally</p>
+    </div>
+
+    <!-- Loading state -->
+    <template lwc:if={isLoading}>
+      <div class="loading-wrapper">
+        <lightning-spinner alternative-text="Loading projects..." size="medium"></lightning-spinner>
+      </div>
+    </template>
+
+    <!-- Error state -->
+    <template lwc:elseif={hasError}>
+      <div class="error-box">
+        <p>⚠️ Unable to load projects. Please refresh the page.</p>
+      </div>
+    </template>
+
+    <!-- Projects grid -->
+    <template lwc:elseif={hasProjects}>
+      <div class="projects-grid">
+        <template for:each={projectCards} for:item="card">
+          <div key={card.Id}
+               class="project-card"
+               style={card.accentStyle}
+               onclick={toggleCard}
+               data-id={card.Id}>
+
+            <!-- Card Header -->
+            <div class="card-header">
+              <div class="client-logo" style={card.logoStyle}>
+                {card.Logo_Initials__c}
+              </div>
+              <div class="card-meta">
+                <h3 class="card-title">{card.Project_Title__c}</h3>
+                <p class="card-client">{card.Client_Name__c} &nbsp;·&nbsp; {card.Project_Year__c}</p>
+                <p class="card-industry">{card.Client_Industry__c}</p>
+              </div>
+              <span class="expand-icon">{card.expandIcon}</span>
+            </div>
+
+            <!-- Technology Tags (always visible) -->
+            <div class="tech-tags">
+              <template for:each={card.techTags} for:item="tag">
+                <span key={tag.id} class="tech-tag" style={card.tagStyle}>{tag.label}</span>
+              </template>
+            </div>
+
+            <!-- Expanded Description -->
+            <template lwc:if={card.isExpanded}>
+              <div class="card-expanded">
+                <p class="card-description">{card.Description__c}</p>
+              </div>
+            </template>
+
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- Empty state -->
+    <template lwc:else>
+      <div class="empty-box">
+        <p>No projects found. Add records to the Portfolio_Project__mdt Custom Metadata Type.</p>
+      </div>
+    </template>
+
+  </section>
+</template>

@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Salesforce Quiz",
+  "contentBody" : {
+    "activeViewId" : "Salesforce_Quiz",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-salesforce-quiz",
+    "urlPrefix" : "salesforce-quiz"
+  },
+  "urlName" : "salesforce-quiz"
+}

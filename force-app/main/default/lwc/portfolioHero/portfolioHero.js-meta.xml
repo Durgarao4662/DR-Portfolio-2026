@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>59.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="profileName"    type="String"  label="Full Name"            default="Durgarao Telagareddi"/>
+            <property name="profileTitle"   type="String"  label="Job Title"            default="Senior Salesforce Developer"/>
+            <property name="yearsExp"       type="Integer" label="Years of Experience"  default="6"/>
+            <property name="location"       type="String"  label="Location"             default="Hyderabad, India"/>
+            <property name="email"          type="String"  label="Email"                default="tmdurgarao@gmail.com"/>
+            <property name="profileSummary" type="String"  label="Profile Summary"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

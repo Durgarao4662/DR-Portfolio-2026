@@ -1,0 +1,196 @@
+/* ════════════════════════════════════════
+   FAB WRAPPER — fixed bottom-right
+   ════════════════════════════════════════ */
+.agent-fab-wrapper {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.75rem;
+}
+
+/* ════════════════════════════════════════
+   MAIN FAB BUTTON
+   ════════════════════════════════════════ */
+.agent-fab {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    border: none;
+    background: linear-gradient(135deg, #0070D2 0%, #032D60 100%);
+    box-shadow:
+        0 6px 24px rgba(0, 112, 210, 0.55),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.25s ease;
+    position: relative;
+}
+
+.agent-fab:hover {
+    transform: scale(1.12) translateY(-3px);
+    box-shadow:
+        0 12px 36px rgba(0, 112, 210, 0.65),
+        0 4px 12px rgba(0, 0, 0, 0.35);
+}
+
+/* Open state — switches to close gradient */
+.agent-fab--open {
+    background: linear-gradient(135deg, #CC0000, #880000);
+    box-shadow:
+        0 6px 24px rgba(204, 0, 0, 0.45),
+        0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Bounce animation on click */
+.agent-fab--bounce {
+    animation: fabBounce 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fabBounce {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(0.85); }
+    100% { transform: scale(1); }
+}
+
+.fab-icon { font-size: 1.6rem; line-height: 1; }
+.fab-icon--close { font-size: 1.2rem; color: white; font-style: normal; }
+
+/* ════════════════════════════════════════
+   PULSE RING ANIMATION
+   ════════════════════════════════════════ */
+.pulse-ring {
+    position: absolute;
+    bottom: 0; right: 0;
+    width: 62px; height: 62px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 112, 210, 0.6);
+    animation: pulseRing 2.5s ease-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulseRing {
+    0%   { transform: scale(1);   opacity: 0.8; }
+    100% { transform: scale(1.9); opacity: 0; }
+}
+
+/* ════════════════════════════════════════
+   UNREAD BADGE
+   ════════════════════════════════════════ */
+.unread-badge {
+    position: absolute;
+    top: -4px; right: -4px;
+    background: #FF3B30;
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    min-width: 20px; height: 20px;
+    border-radius: 10px;
+    border: 2px solid white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 4px;
+    animation: badgePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes badgePop {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+}
+
+/* ════════════════════════════════════════
+   TOOLTIP
+   ════════════════════════════════════════ */
+.agent-tooltip {
+    background: white;
+    border: 1px solid #DDDDDD;
+    border-radius: 14px;
+    padding: 0.75rem 1rem;
+    max-width: 220px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    animation: tooltipSlide 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+}
+
+@keyframes tooltipSlide {
+    from { opacity: 0; transform: translateY(12px) scale(0.9); }
+    to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* Tooltip arrow */
+.agent-tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -8px; right: 20px;
+    border-left: 8px solid transparent;
+    border-right: 8px solid transparent;
+    border-top: 8px solid white;
+}
+
+.tooltip-icon { font-size: 1.2rem; flex-shrink: 0; }
+
+.tooltip-text {
+    font-family: Arial, sans-serif;
+    font-size: 0.82rem;
+    color: #1A1A2E;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.tooltip-close {
+    background: none; border: none;
+    font-size: 0.7rem; color: #999;
+    cursor: pointer; padding: 0; line-height: 1;
+    flex-shrink: 0;
+    transition: color 0.2s;
+}
+.tooltip-close:hover { color: #333; }
+
+/* ════════════════════════════════════════
+   HIDE SALESFORCE DEFAULT BUTTON
+   (we replace it with our custom FAB)
+   ════════════════════════════════════════ */
+embeddedMessagingFrame,
+.embeddedMessagingConversationButtonWrapper,
+.embeddedMessagingMinimizedButton {
+    display: none !important;
+}
+
+/* ════════════════════════════════════════
+   MOBILE RESPONSIVE (≤ 768px)
+   ════════════════════════════════════════ */
+@media (max-width: 768px) {
+    .agent-fab-wrapper {
+        bottom: 1.25rem;
+        right: 1.25rem;
+    }
+    .agent-fab { width: 56px; height: 56px; }
+    .pulse-ring { width: 56px; height: 56px; }
+    .fab-icon { font-size: 1.4rem; }
+    .agent-tooltip { max-width: 180px; font-size: 0.78rem; }
+}
+
+/* ════════════════════════════════════════
+   ACCESSIBILITY
+   ════════════════════════════════════════ */
+.agent-fab:focus-visible {
+    outline: 3px solid #00A1E0;
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .pulse-ring, .agent-fab--bounce,
+    .agent-tooltip, .unread-badge {
+        animation: none;
+    }
+}

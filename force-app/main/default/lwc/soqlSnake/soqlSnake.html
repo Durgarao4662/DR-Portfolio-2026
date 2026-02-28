@@ -1,0 +1,139 @@
+<!-- soqlSnake.html -->
+<template>
+    <div class="game-shell">
+
+        <!-- Grid background -->
+        <div class="shell-grid" aria-hidden="true"></div>
+
+        <!-- ══ HEADER ══ -->
+        <header class="game-header">
+            <div class="logo-row">
+                <span class="logo-snake">🐍</span>
+                <div class="logo-text">
+                    <span class="logo-main">SOQL<span class="logo-accent">Snake</span></span>
+                    <span class="logo-sub">SELECT * FROM fun WHERE skill = 'Apex'</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ══ STATS ══ -->
+        <div class="stats-row">
+            <div class="stat-chip">
+                <span class="stat-lbl">SCORE</span>
+                <span class="stat-val">{score}</span>
+            </div>
+            <div class="stat-chip stat-chip--center">
+                <span class="stat-lbl">HIGH SCORE</span>
+                <span class="stat-val stat-val--gold">{highScore}</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-lbl">LEVEL</span>
+                <span class="stat-val">{level}</span>
+            </div>
+        </div>
+
+        <!-- ══ QUERY BUILDER (current eaten tokens) ══ -->
+        <div class="query-bar" aria-live="polite" aria-label="Current SOQL query">
+            <span class="query-prefix">SELECT </span>
+            <span class="query-tokens">{queryDisplay}</span>
+            <span class="query-cursor" aria-hidden="true">▌</span>
+        </div>
+
+        <!-- ══ CANVAS AREA ══ -->
+        <div class="canvas-wrapper">
+            <canvas
+                lwc:ref="gameCanvas"
+                class="game-canvas"
+                width="480"
+                height="480"
+                aria-label="SOQL Snake game board"
+                tabindex="0"
+            ></canvas>
+
+            <!-- START OVERLAY -->
+            <template lwc:if={showStartOverlay}>
+                <div class="overlay overlay--start">
+                    <div class="overlay-content">
+                        <div class="overlay-icon">🐍</div>
+                        <h2 class="overlay-title">SOQL Snake</h2>
+                        <p class="overlay-hint">Eat SOQL keywords to build a query</p>
+                        <div class="controls-hint">
+                            <span>⬆⬇⬅➡ or</span>
+                            <span class="kbd-group">
+                                <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+                            </span>
+                        </div>
+                        <button class="btn-play" onclick={startGame}>▶ Start Game</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- PAUSED OVERLAY -->
+            <template lwc:if={showPauseOverlay}>
+                <div class="overlay overlay--pause">
+                    <div class="overlay-content">
+                        <div class="overlay-icon">⏸</div>
+                        <h2 class="overlay-title">Paused</h2>
+                        <button class="btn-play" onclick={resumeGame}>▶ Resume</button>
+                    </div>
+                </div>
+            </template>
+
+            <!-- GAME OVER OVERLAY -->
+            <template lwc:if={showGameOverOverlay}>
+                <div class="overlay overlay--gameover">
+                    <div class="overlay-content">
+                        <div class="overlay-icon">💀</div>
+                        <h2 class="overlay-title">Query Failed!</h2>
+                        <p class="overlay-query">{finalQuery}</p>
+                        <div class="go-stats">
+                            <div class="go-stat">
+                                <span class="go-val">{score}</span>
+                                <span class="go-lbl">Score</span>
+                            </div>
+                            <div class="go-divider"></div>
+                            <div class="go-stat">
+                                <span class="go-val">{level}</span>
+                                <span class="go-lbl">Level</span>
+                            </div>
+                            <div class="go-divider"></div>
+                            <div class="go-stat">
+                                <span class="go-val">{snakeLength}</span>
+                                <span class="go-lbl">Length</span>
+                            </div>
+                        </div>
+                        <button class="btn-play" onclick={restartGame}>↺ Try Again</button>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+
+        <!-- ══ MOBILE D-PAD ══ -->
+        <div class="dpad" aria-label="Direction controls">
+            <div class="dpad-row">
+                <button class="dpad-btn dpad-btn--up"   onclick={dpadUp}   aria-label="Up">▲</button>
+            </div>
+            <div class="dpad-row">
+                <button class="dpad-btn dpad-btn--left"  onclick={dpadLeft}  aria-label="Left">◀</button>
+                <button class="dpad-btn dpad-btn--pause" onclick={togglePause} aria-label="Pause">⏸</button>
+                <button class="dpad-btn dpad-btn--right" onclick={dpadRight} aria-label="Right">▶</button>
+            </div>
+            <div class="dpad-row">
+                <button class="dpad-btn dpad-btn--down"  onclick={dpadDown}  aria-label="Down">▼</button>
+            </div>
+        </div>
+
+        <!-- ══ SOQL KEYWORDS LEGEND ══ -->
+        <div class="legend">
+            <span class="legend-title">Collect in order:</span>
+            <div class="legend-tokens">
+                <template for:each={tokenLegend} for:item="tok">
+                    <span key={tok.word} class="legend-token" style={tok.style}>{tok.word}</span>
+                </template>
+            </div>
+        </div>
+
+        <footer class="game-footer">⚡ Durgarao Telagareddi · Salesforce Portfolio</footer>
+    </div>
+</template>

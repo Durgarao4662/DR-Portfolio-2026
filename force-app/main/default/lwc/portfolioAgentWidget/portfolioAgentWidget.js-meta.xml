@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightningCommunity__Default">
+            <property name="agentName"    type="String"  label="Agent Display Name"
+                      default="Ask Durgarao's AI"/>
+            <property name="welcomeHint"  type="String"  label="Tooltip Text"
+                      default="Ask me about Durgarao's projects &amp; skills!"/>
+            <property name="showOnMobile" type="Boolean" label="Show on Mobile"
+                      default="true"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

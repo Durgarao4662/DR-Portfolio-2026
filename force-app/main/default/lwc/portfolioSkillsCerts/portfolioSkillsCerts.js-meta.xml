@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>65.0</apiVersion>
+    <isExposed>true</isExposed>
+    <targets>
+        <target>lightningCommunity__Page</target>
+        <target>lightningCommunity__Default</target>
+    </targets>
+</LightningComponentBundle>
+
+<!--
+=======================================================
+CUSTOM METADATA SETUP — Portfolio_Skill__mdt
+=======================================================
+Fields to create:
+  Skill_Name__c          Text(255)
+  Category__c            Text(100)    e.g. Languages / Salesforce / Integration / DevOps / Database / Tools
+  Proficiency__c         Text(50)     e.g. Expert / Advanced / Proficient
+  Proficiency_Percent__c Number(3,0)  e.g. 95
+  Icon_Emoji__c          Text(10)     e.g. ⚡
+  Category_Color__c      Text(10)     e.g. #0070D2
+  Sort_Order__c          Number(3,0)
+
+Sample Records:
+  Apex                   Languages    Expert       95   ⚡  #FF6B6B  1
+  JavaScript             Languages    Advanced     85   🌐  #FF6B6B  2
+  HTML/CSS               Languages    Advanced     80   🎨  #FF6B6B  3
+  Lightning Web Comp.    Salesforce   Expert       95   ⚡  #0070D2  4
+  Sales Cloud            Salesforce   Expert       95   ☁️  #0070D2  5
+  Service Cloud          Salesforce   Advanced     90   🛎️  #0070D2  6
+  Data Cloud             Salesforce   Advanced     85   📦  #0070D2  7
+  Experience Cloud       Salesforce   Advanced     85   🌐  #0070D2  8
+  REST/SOAP APIs         Integration  Expert       90   🔗  #9B59B6  9
+  Salesforce Connect     Integration  Proficient   75   🔌  #9B59B6  10
+  Copado                 DevOps       Advanced     85   🚀  #27AE60  11
+  Git / GitHub           DevOps       Expert       90   🐙  #27AE60  12
+  SOQL                   Database     Expert       95   🗄️  #E67E22  13
+  SQL                    Database     Advanced     80   💾  #E67E22  14
+  Workbench              Tools        Expert       90   🔧  #16A085  15
+  Data Loader            Tools        Expert       90   📤  #16A085  16
+
+=======================================================
+CUSTOM METADATA SETUP — Portfolio_Certification__mdt
+=======================================================
+Fields to create:
+  Cert_Name__c      Text(255)
+  Issuer__c         Text(100)
+  Credential_ID__c  Text(100)
+  Issue_Date__c     Text(50)   e.g. Jan 2022
+  Logo_URL__c       URL
+  Badge_Color__c    Text(10)   hex color for strip/accent
+  Cert_URL__c       URL        link to verify the certification
+  Sort_Order__c     Number(3,0)
+
+Sample Records — paste official Trailhead logo URLs into Logo_URL__c:
+  Salesforce Certified Administrator   Salesforce  22893898  Jan 2022  #00A1E0  1
+  Salesforce Platform Developer I      Salesforce  2792181   Dec 2022  #0070D2  2
+  Salesforce Data Cloud Consultant     Salesforce  3789512   Nov 2023  #032D60  3
+  Salesforce Platform App Builder      Salesforce  3940388   Dec 2023  #9B59B6  4
+  Salesforce Certified AI Associate    Salesforce  4842265   Sep 2024  #FF6B6B  5
+  Salesforce Certified AI Specialist   Salesforce  4958513   Oct 2024  #E67E22  6
+
+Official Logo URLs (copy these into Logo_URL__c):
+  Admin:         https://trailhead.salesforce.com/assets/certification-site/images/certifications/administrator.png
+  PD1:           https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_developer_i.png
+  Data Cloud:    https://trailhead.salesforce.com/assets/certification-site/images/certifications/data_cloud_consultant.png
+  App Builder:   https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_app_builder.png
+  AI Associate:  https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_associate.png
+  AI Specialist: https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_specialist.png
+
+Also add these Trailhead domains to CSP Trusted Sites:
+  https://trailhead.salesforce.com   (cert logo images)
+  https://dragonslayer.salesforce.com (alternate CDN)
+=======================================================
+-->

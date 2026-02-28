@@ -1,0 +1,184 @@
+<!-- portfolioSkillsCerts.html -->
+<template>
+    <section class="sc-section">
+
+        <!-- Background decoration -->
+        <div class="sc-bg" aria-hidden="true">
+            <div class="bg-grid"></div>
+            <div class="bg-glow bg-glow-1"></div>
+            <div class="bg-glow bg-glow-2"></div>
+        </div>
+
+        <div class="sc-inner">
+
+            <!-- Section heading -->
+            <div class="sc-header">
+                <span class="sc-eyebrow">Expertise</span>
+                <h2 class="sc-title">Skills &amp; Certifications</h2>
+                <p class="sc-subtitle">6+ years of Salesforce mastery — verified and growing</p>
+            </div>
+
+            <!-- ── TAB BAR ── -->
+            <div class="tab-bar" role="tablist" aria-label="Skills and Certifications tabs">
+
+                <button
+                    class={skillsTabClass}
+                    role="tab"
+                    aria-selected={isSkillsActive}
+                    aria-controls="panel-skills"
+                    id="tab-skills"
+                    onclick={switchToSkills}
+                >
+                    <span class="tab-icon">⚡</span>
+                    <span class="tab-label">Skills</span>
+                    <template lwc:if={isSkillsActive}>
+                        <span class="tab-indicator" aria-hidden="true"></span>
+                    </template>
+                </button>
+
+                <button
+                    class={certsTabClass}
+                    role="tab"
+                    aria-selected={isCertsActive}
+                    aria-controls="panel-certs"
+                    id="tab-certs"
+                    onclick={switchToCerts}
+                >
+                    <span class="tab-icon">🏆</span>
+                    <span class="tab-label">Certifications</span>
+                    <template lwc:if={isCertsActive}>
+                        <span class="tab-indicator" aria-hidden="true"></span>
+                    </template>
+                </button>
+
+            </div>
+
+            <!-- ══════════════════════════════════
+                 SKILLS PANEL
+                 ══════════════════════════════════ -->
+            <template lwc:if={isSkillsActive}>
+                <div class="panel" id="panel-skills" role="tabpanel" aria-labelledby="tab-skills">
+
+                    <!-- Loading -->
+                    <template lwc:if={skillsLoading}>
+                        <div class="panel-loading">
+                            <div class="spinner"></div>
+                            <p>Loading skills...</p>
+                        </div>
+                    </template>
+
+                    <!-- Error -->
+                    <template lwc:elseif={skillsError}>
+                        <div class="panel-error">⚠️ Unable to load skills. Please refresh.</div>
+                    </template>
+
+                    <!-- Skills Grid -->
+                    <template lwc:else>
+                        <!-- Category filter pills -->
+                        <div class="category-pills">
+                            <button
+                                class={allPillClass}
+                                onclick={filterAll}
+                                data-cat="all"
+                            >All</button>
+                            <template for:each={categories} for:item="cat">
+                                <button
+                                    key={cat.id}
+                                    class={cat.pillClass}
+                                    onclick={filterCategory}
+                                    data-cat={cat.name}
+                                    style={cat.pillStyle}
+                                >{cat.name}</button>
+                            </template>
+                        </div>
+
+                        <div class="skills-grid">
+                            <template for:each={filteredSkills} for:item="skill">
+                                <div key={skill.MasterLabel} class="skill-card" style={skill.cardStyle}>
+                                    <div class="skill-card-top">
+                                        <span class="skill-icon">{skill.Icon_Emoji__c}</span>
+                                        <div class="skill-info">
+                                            <span class="skill-name">{skill.Skill_Name__c}</span>
+                                            <span class="skill-category" style={skill.catStyle}>{skill.Category__c}</span>
+                                        </div>
+                                        <span class="skill-pct" style={skill.pctStyle}>{skill.Proficiency__c}</span>
+                                    </div>
+                                    <!-- Progress bar -->
+                                    <div class="skill-bar-track">
+                                        <div class="skill-bar-fill" style={skill.barStyle}></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                </div>
+            </template>
+
+            <!-- ══════════════════════════════════
+                 CERTIFICATIONS PANEL
+                 ══════════════════════════════════ -->
+            <template lwc:if={isCertsActive}>
+                <div class="panel" id="panel-certs" role="tabpanel" aria-labelledby="tab-certs">
+
+                    <!-- Loading -->
+                    <template lwc:if={certsLoading}>
+                        <div class="panel-loading">
+                            <div class="spinner"></div>
+                            <p>Loading certifications...</p>
+                        </div>
+                    </template>
+
+                    <!-- Error -->
+                    <template lwc:elseif={certsError}>
+                        <div class="panel-error">⚠️ Unable to load certifications. Please refresh.</div>
+                    </template>
+
+                    <!-- Certs Grid -->
+                    <template lwc:else>
+                        <div class="certs-grid">
+                            <template for:each={certifications} for:item="cert">
+                                <a
+                                    key={cert.MasterLabel}
+                                    href={cert.Cert_URL__c}
+                                    class="cert-card"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label={cert.Cert_Name__c}
+                                >
+                                    <!-- Accent top strip -->
+                                    <div class="cert-strip" style={cert.stripStyle}></div>
+
+                                    <!-- Logo area -->
+                                    <div class="cert-logo-wrap" style={cert.logoBgStyle}>
+                                        <img
+                                            src={cert.Logo_URL__c}
+                                            alt={cert.Cert_Name__c}
+                                            class="cert-logo-img"
+                                            onerror={handleLogoError}
+                                            data-fallback={cert.Cert_Name__c}
+                                        />
+                                    </div>
+
+                                    <div class="cert-body">
+                                        <h3 class="cert-name">{cert.Cert_Name__c}</h3>
+                                        <p class="cert-issuer">{cert.Issuer__c}</p>
+                                        <div class="cert-meta">
+                                            <span class="cert-date">📅 {cert.Issue_Date__c}</span>
+                                            <span class="cert-id">ID: {cert.Credential_ID__c}</span>
+                                        </div>
+                                        <div class="cert-verify">
+                                            Verify ↗
+                                        </div>
+                                    </div>
+                                </a>
+                            </template>
+                        </div>
+                    </template>
+
+                </div>
+            </template>
+
+        </div>
+    </section>
+</template>

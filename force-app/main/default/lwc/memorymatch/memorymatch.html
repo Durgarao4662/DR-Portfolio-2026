@@ -1,0 +1,132 @@
+<!-- memoryMatch.html -->
+<template>
+    <div class="game-shell">
+
+        <!-- ══ SCANLINE OVERLAY ══ -->
+        <div class="scanlines" aria-hidden="true"></div>
+
+        <!-- ══ HEADER ══ -->
+        <header class="game-header">
+            <div class="header-brand">
+                <span class="brand-icon">⚡</span>
+                <span class="brand-name">Memory<span class="brand-accent">Match</span></span>
+            </div>
+            <p class="header-sub">Flip &amp; match the Salesforce icons</p>
+        </header>
+
+        <!-- ══ STATS BAR ══ -->
+        <div class="stats-bar">
+            <div class="stat-pill">
+                <span class="stat-icon">🕐</span>
+                <span class="stat-label">TIME</span>
+                <span class="stat-value">{formattedTime}</span>
+            </div>
+            <div class="stat-pill stat-pill--center">
+                <span class="stat-icon">🎯</span>
+                <span class="stat-label">MATCHES</span>
+                <span class="stat-value">{matchCount}<span class="stat-total">/{totalPairs}</span></span>
+            </div>
+            <div class="stat-pill">
+                <span class="stat-icon">🔄</span>
+                <span class="stat-label">MOVES</span>
+                <span class="stat-value">{moves}</span>
+            </div>
+        </div>
+
+        <!-- ══ WIN SCREEN ══ -->
+        <template lwc:if={gameWon}>
+            <div class="win-screen">
+                <div class="win-content">
+                    <div class="win-trophy">🏆</div>
+                    <h2 class="win-title">You Cracked It!</h2>
+                    <p class="win-sub">All pairs matched</p>
+                    <div class="win-stats">
+                        <div class="win-stat">
+                            <span class="win-stat-value">{formattedTime}</span>
+                            <span class="win-stat-label">Time</span>
+                        </div>
+                        <div class="win-stat-divider"></div>
+                        <div class="win-stat">
+                            <span class="win-stat-value">{moves}</span>
+                            <span class="win-stat-label">Moves</span>
+                        </div>
+                        <div class="win-stat-divider"></div>
+                        <div class="win-stat">
+                            <span class="win-stat-value">{starRating}</span>
+                            <span class="win-stat-label">Rating</span>
+                        </div>
+                    </div>
+                    <button class="btn-restart btn-restart--win" onclick={restartGame}>
+                        ↺ Play Again
+                    </button>
+                </div>
+                <!-- Confetti dots -->
+                <div class="confetti" aria-hidden="true">
+                    <template for:each={confettiItems} for:item="c">
+                        <span key={c.id} class="confetti-dot" style={c.style}></span>
+                    </template>
+                </div>
+            </div>
+        </template>
+
+        <!-- ══ GAME BOARD ══ -->
+        <template lwc:else>
+            <div class="board" role="grid" aria-label="Memory card grid">
+                <template for:each={cards} for:item="card">
+                    <div
+                        key={card.id}
+                        class={card.cardClass}
+                        onclick={handleCardClick}
+                        data-id={card.id}
+                        role="gridcell"
+                        aria-label={card.ariaLabel}
+                        aria-pressed={card.isFlipped}
+                    >
+                        <div class="card-inner">
+                            <!-- BACK face (hidden face-down) -->
+                            <div class="card-face card-face--back">
+                                <span class="card-back-icon">⚡</span>
+                            </div>
+                            <!-- FRONT face (revealed on flip) -->
+                            <div class="card-face card-face--front">
+                                <span class="card-emoji">{card.emoji}</span>
+                                <span class="card-label">{card.label}</span>
+                            </div>
+                        </div>
+                        <!-- Matched glow overlay -->
+                        <template lwc:if={card.isMatched}>
+                            <div class="card-matched-glow" aria-hidden="true"></div>
+                        </template>
+                    </div>
+                </template>
+            </div>
+        </template>
+
+        <!-- ══ CONTROLS ══ -->
+        <div class="controls">
+            <button class="btn-restart" onclick={restartGame}>
+                ↺ New Game
+            </button>
+            <div class="difficulty-toggle">
+                <button
+                    class={easyBtnClass}
+                    onclick={setEasy}
+                    data-diff="easy">
+                    Easy (4×3)
+                </button>
+                <button
+                    class={hardBtnClass}
+                    onclick={setHard}
+                    data-diff="hard">
+                    Hard (4×4)
+                </button>
+            </div>
+        </div>
+
+        <!-- ══ FOOTER ══ -->
+        <footer class="game-footer">
+            ⚡ Durgarao Telagareddi &nbsp;·&nbsp; Salesforce Portfolio
+        </footer>
+
+    </div>
+</template>

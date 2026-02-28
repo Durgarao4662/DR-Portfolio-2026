@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Trailhead Trivia",
+  "contentBody" : {
+    "activeViewId" : "Trailhead_Trivia",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-trailhead-trivia",
+    "urlPrefix" : "trailhead-trivia"
+  },
+  "urlName" : "trailhead-trivia"
+}

@@ -1,0 +1,587 @@
+/* memoryMatch.css
+   Aesthetic: Dark arcade cabinet — neon on void
+   Font: Orbitron display / system mono body
+*/
+
+/* ══════════════════════════════════════════════
+   CSS VARIABLES
+   ══════════════════════════════════════════════ */
+:host {
+    --void:        #050810;
+    --void-2:      #0A0F1E;
+    --void-3:      #111827;
+    --neon-blue:   #00D4FF;
+    --neon-gold:   #FFD700;
+    --neon-green:  #39FF14;
+    --neon-pink:   #FF2D78;
+    --sf-blue:     #0070D2;
+    --text-bright: #E8F4FF;
+    --text-dim:    #5A7A9A;
+    --card-back:   #0D1F3C;
+    --card-front:  #0A1628;
+    --border-dim:  rgba(0, 212, 255, 0.15);
+    --border-glow: rgba(0, 212, 255, 0.6);
+    --radius-card: 14px;
+    --shadow-neon: 0 0 20px rgba(0, 212, 255, 0.35),
+                   0 0 60px rgba(0, 212, 255, 0.1);
+}
+
+/* ══════════════════════════════════════════════
+   GAME SHELL
+   ══════════════════════════════════════════════ */
+.game-shell {
+    min-height: 100vh;
+    background:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,112,210,0.25) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 40% at 80% 90%, rgba(0,212,255,0.1) 0%, transparent 60%),
+        var(--void);
+    font-family: 'Rajdhani', 'Segoe UI', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem 3rem;
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* CRT scanlines overlay */
+.scanlines {
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 100;
+    mix-blend-mode: overlay;
+}
+
+/* ══════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════ */
+.game-header {
+    text-align: center;
+    padding: 2.5rem 1rem 0.75rem;
+}
+
+.header-brand {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 0.3rem;
+}
+
+.brand-icon {
+    font-size: 1.8rem;
+    filter: drop-shadow(0 0 10px var(--neon-gold));
+    animation: iconPulse 2s ease-in-out infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { filter: drop-shadow(0 0 8px var(--neon-gold)); }
+    50%       { filter: drop-shadow(0 0 20px var(--neon-gold)); }
+}
+
+.brand-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.9rem;
+    font-weight: 900;
+    color: var(--text-bright);
+    letter-spacing: 0.05em;
+    text-shadow: 0 0 20px rgba(0,212,255,0.4);
+}
+
+.brand-accent {
+    color: var(--neon-blue);
+    text-shadow:
+        0 0 10px var(--neon-blue),
+        0 0 30px rgba(0,212,255,0.4);
+}
+
+.header-sub {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0;
+}
+
+/* ══════════════════════════════════════════════
+   STATS BAR
+   ══════════════════════════════════════════════ */
+.stats-bar {
+    display: flex;
+    gap: 1rem;
+    margin: 1.75rem 0 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.stat-pill {
+    background: var(--void-2);
+    border: 1px solid var(--border-dim);
+    border-radius: 50px;
+    padding: 0.6rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    min-width: 90px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.stat-pill--center {
+    border-color: rgba(0, 212, 255, 0.35);
+    box-shadow: var(--shadow-neon);
+}
+
+.stat-icon { font-size: 1rem; }
+
+.stat-label {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.55rem;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px rgba(0,212,255,0.5);
+    line-height: 1;
+}
+
+.stat-total {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+}
+
+/* ══════════════════════════════════════════════
+   GAME BOARD
+   ══════════════════════════════════════════════ */
+.board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    max-width: 520px;
+    width: 100%;
+    padding: 1.5rem;
+    background: var(--void-2);
+    border: 1px solid var(--border-dim);
+    border-radius: 20px;
+    box-shadow:
+        0 0 0 1px rgba(0,212,255,0.05),
+        0 20px 60px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* ══════════════════════════════════════════════
+   CARD — 3D FLIP
+   perspective must be on parent, not the card
+   ══════════════════════════════════════════════ */
+.card {
+    aspect-ratio: 1;
+    perspective: 900px;
+    cursor: pointer;
+    position: relative;
+    border-radius: var(--radius-card);
+}
+
+/* The flipping container */
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+    border-radius: var(--radius-card);
+}
+
+/* Flipped state — rotate the inner */
+.card--flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Both faces share base styles */
+.card-face {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    overflow: hidden;
+}
+
+/* ── BACK face (shown by default) ── */
+.card-face--back {
+    background:
+        repeating-linear-gradient(
+            45deg,
+            transparent,
+            transparent 6px,
+            rgba(0,112,210,0.06) 6px,
+            rgba(0,112,210,0.06) 12px
+        ),
+        var(--card-back);
+    border: 1px solid rgba(0, 112, 210, 0.3);
+    box-shadow:
+        inset 0 0 20px rgba(0,112,210,0.1),
+        0 4px 20px rgba(0,0,0,0.4);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card:hover:not(.card--flipped):not(.card--matched) .card-face--back {
+    border-color: rgba(0, 212, 255, 0.55);
+    box-shadow:
+        inset 0 0 30px rgba(0,212,255,0.08),
+        0 0 20px rgba(0,212,255,0.2),
+        0 4px 20px rgba(0,0,0,0.4);
+}
+
+.card-back-icon {
+    font-size: 1.6rem;
+    opacity: 0.3;
+    filter: drop-shadow(0 0 6px var(--sf-blue));
+}
+
+/* ── FRONT face (revealed after flip) ── */
+.card-face--front {
+    background: linear-gradient(145deg, #0D2347, #06132A);
+    border: 1px solid rgba(0, 212, 255, 0.25);
+    transform: rotateY(180deg);
+    gap: 0.3rem;
+    padding: 0.5rem;
+}
+
+.card-emoji {
+    font-size: 2rem;
+    line-height: 1;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.5));
+}
+
+.card-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: var(--neon-blue);
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.85;
+    line-height: 1.2;
+}
+
+/* ── MATCHED card ── */
+.card--matched .card-face--front {
+    background: linear-gradient(145deg, #0A2A1A, #051A0D);
+    border-color: rgba(57, 255, 20, 0.4);
+}
+
+.card--matched .card-emoji {
+    filter:
+        drop-shadow(0 0 8px var(--neon-green))
+        drop-shadow(0 0 20px rgba(57,255,20,0.3));
+}
+
+.card--matched .card-label {
+    color: var(--neon-green);
+}
+
+/* Matched pulse glow overlay */
+.card-matched-glow {
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-card);
+    background: radial-gradient(circle, rgba(57,255,20,0.12) 0%, transparent 70%);
+    animation: matchedPulse 2s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes matchedPulse {
+    0%, 100% { opacity: 0.6; }
+    50%       { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════
+   WIN SCREEN
+   ══════════════════════════════════════════════ */
+.win-screen {
+    position: relative;
+    width: 100%;
+    max-width: 520px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 400px;
+    overflow: hidden;
+}
+
+.win-content {
+    position: relative;
+    z-index: 2;
+    background: linear-gradient(145deg, var(--void-2), var(--void-3));
+    border: 1px solid rgba(255, 215, 0, 0.35);
+    border-radius: 24px;
+    padding: 3rem 2.5rem;
+    text-align: center;
+    box-shadow:
+        0 0 40px rgba(255,215,0,0.15),
+        0 20px 60px rgba(0,0,0,0.6);
+    width: 100%;
+    animation: winReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes winReveal {
+    from { opacity: 0; transform: scale(0.7) translateY(30px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.win-trophy {
+    font-size: 5rem;
+    line-height: 1;
+    margin-bottom: 1rem;
+    filter:
+        drop-shadow(0 0 15px var(--neon-gold))
+        drop-shadow(0 0 40px rgba(255,215,0,0.4));
+    animation: trophySpin 1s cubic-bezier(0.34,1.56,0.64,1) forwards;
+}
+
+@keyframes trophySpin {
+    from { transform: rotate(-20deg) scale(0.5); opacity: 0; }
+    to   { transform: rotate(0deg) scale(1); opacity: 1; }
+}
+
+.win-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--neon-gold);
+    text-shadow:
+        0 0 15px rgba(255,215,0,0.6),
+        0 0 40px rgba(255,215,0,0.2);
+    margin: 0 0 0.3rem;
+    letter-spacing: 0.03em;
+}
+
+.win-sub {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin: 0 0 2rem;
+}
+
+.win-stats {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    padding: 1.25rem 1rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 14px;
+    border: 1px solid var(--border-dim);
+}
+
+.win-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.win-stat-value {
+    font-family: 'Orbitron', monospace;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px rgba(0,212,255,0.4);
+}
+
+.win-stat-label {
+    font-size: 0.65rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+}
+
+.win-stat-divider {
+    width: 1px;
+    height: 40px;
+    background: var(--border-dim);
+}
+
+.btn-restart--win {
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    color: #0A0F1E;
+    border: none;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 0.9rem 2.5rem;
+    box-shadow:
+        0 4px 20px rgba(255,215,0,0.4),
+        0 0 40px rgba(255,165,0,0.2);
+}
+
+.btn-restart--win:hover {
+    background: linear-gradient(135deg, #FFF176, #FFD700);
+    transform: translateY(-3px);
+    box-shadow:
+        0 8px 30px rgba(255,215,0,0.55),
+        0 0 60px rgba(255,165,0,0.3);
+}
+
+/* Confetti dots */
+.confetti {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.confetti-dot {
+    position: absolute;
+    border-radius: 50%;
+    animation: confettiFall 1s ease-out forwards;
+}
+
+@keyframes confettiFall {
+    from { opacity: 1; transform: translateY(-20px) rotate(0deg) scale(0); }
+    to   { opacity: 0; transform: translateY(120px) rotate(720deg) scale(1); }
+}
+
+/* ══════════════════════════════════════════════
+   CONTROLS
+   ══════════════════════════════════════════════ */
+.controls {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.btn-restart {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--neon-blue);
+    background: transparent;
+    border: 1px solid rgba(0,212,255,0.35);
+    border-radius: 50px;
+    padding: 0.65rem 1.6rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+}
+
+.btn-restart:hover {
+    background: rgba(0,212,255,0.08);
+    border-color: var(--neon-blue);
+    box-shadow: 0 0 20px rgba(0,212,255,0.2);
+    transform: translateY(-2px);
+}
+
+/* Difficulty toggle */
+.difficulty-toggle {
+    display: flex;
+    background: var(--void-2);
+    border: 1px solid var(--border-dim);
+    border-radius: 50px;
+    overflow: hidden;
+    padding: 3px;
+    gap: 3px;
+}
+
+.diff-btn {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1.1rem;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-transform: uppercase;
+}
+
+.diff-btn:hover:not(.diff-btn--active) {
+    color: var(--text-bright);
+    background: rgba(255,255,255,0.05);
+}
+
+.diff-btn--active {
+    background: linear-gradient(135deg, #0070D2, #00A1E0);
+    color: white;
+    box-shadow: 0 0 15px rgba(0,161,224,0.4);
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
+.game-footer {
+    margin-top: 2.5rem;
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE — MOBILE
+   ══════════════════════════════════════════════ */
+@media (max-width: 560px) {
+    .board {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 0.5rem;
+        padding: 1rem;
+        max-width: 100%;
+    }
+
+    .card-emoji { font-size: 1.4rem; }
+    .card-label { font-size: 0.5rem; }
+
+    .brand-name  { font-size: 1.4rem; }
+    .stat-value  { font-size: 1rem; }
+    .stats-bar   { gap: 0.6rem; }
+    .stat-pill   { min-width: 75px; padding: 0.5rem 0.9rem; }
+}
+
+@media (max-width: 380px) {
+    .board { grid-template-columns: repeat(4, 1fr); gap: 0.4rem; padding: 0.75rem; }
+    .card-emoji { font-size: 1.1rem; }
+    .card-label { display: none; }
+}
+
+/* ══════════════════════════════════════════════
+   ACCESSIBILITY
+   ══════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .card-inner,
+    .confetti-dot,
+    .win-content,
+    .win-trophy,
+    .brand-icon,
+    .card-matched-glow {
+        animation: none;
+        transition: none;
+    }
+}

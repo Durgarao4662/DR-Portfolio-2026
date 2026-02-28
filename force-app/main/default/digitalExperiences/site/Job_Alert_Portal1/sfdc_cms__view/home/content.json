@@ -1,0 +1,102 @@
+{
+  "type" : "sfdc_cms__view",
+  "title" : "Home",
+  "contentBody" : {
+    "component" : {
+      "children" : [ {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"fb2df8ed-c763-495e-a38a-88b302c5c1c3\",\"columns\":[{\"UUID\":\"80945d72-12ce-4e77-904f-fbf9b0d318f3\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : {
+                "email" : "tmdurgarao@gmail.com",
+                "location" : "Hyderabad, India",
+                "profileName" : "Durgarao Telagareddy",
+                "profileTitle" : "Senior Salesforce Developer",
+                "yearsExp" : 6
+              },
+              "definition" : "c:portfolioHero",
+              "id" : "8b4dff8b-7409-4a23-8769-e87a9036bf3b",
+              "type" : "component"
+            } ],
+            "id" : "80945d72-12ce-4e77-904f-fbf9b0d318f3",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "fb2df8ed-c763-495e-a38a-88b302c5c1c3",
+          "type" : "component"
+        }, {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"0e193645-d89f-42ec-ac3b-fa8f9c279a51\",\"columns\":[{\"UUID\":\"28d5a327-91bf-4a53-9bed-ba5752afb271\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":null}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : { },
+              "definition" : "c:portfolioSkillsCerts",
+              "id" : "3bc2b350-e355-4b6b-acd5-2984e6f6fc97",
+              "type" : "component"
+            } ],
+            "id" : "28d5a327-91bf-4a53-9bed-ba5752afb271",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "0e193645-d89f-42ec-ac3b-fa8f9c279a51",
+          "type" : "component"
+        } ],
+        "id" : "2eadd88b-572a-4b16-a159-d988d7da5e9b",
+        "name" : "content",
+        "title" : "Content",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "customHeadTags" : "",
+            "description" : "",
+            "pageTitle" : "Home",
+            "recordId" : "{!recordId}"
+          },
+          "definition" : "community_builder:seoAssistant",
+          "id" : "035c1fda-671b-45f1-81db-6c821b22235c",
+          "type" : "component"
+        } ],
+        "id" : "067396c1-bade-4ec2-a29b-a5fee0c93143",
+        "name" : "sfdcHiddenRegion",
+        "title" : "sfdcHiddenRegion",
+        "type" : "region"
+      } ],
+      "definition" : "community_layout:sldsFlexibleLayout",
+      "id" : "1a043f5a-100d-48fa-a1a4-59048891cb7d",
+      "type" : "component"
+    },
+    "dataProviders" : [ ],
+    "themeLayoutType" : "Inner",
+    "viewType" : "home"
+  },
+  "urlName" : "home"
+}

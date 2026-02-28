@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Memory Match",
+  "contentBody" : {
+    "activeViewId" : "Memory_Match",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-memory-match",
+    "urlPrefix" : "memory-match"
+  },
+  "urlName" : "memory-match"
+}

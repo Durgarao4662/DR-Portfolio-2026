@@ -1,0 +1,67 @@
+{
+  "type" : "sfdc_cms__view",
+  "title" : "Projects",
+  "contentBody" : {
+    "component" : {
+      "children" : [ {
+        "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"320e8ae9-0ad4-4812-84f1-9b5ef6435052\",\"columns\":[{\"UUID\":\"b5df4c47-923c-41c6-8a9f-67352ce05cec\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : { },
+              "definition" : "c:portfolioProjects",
+              "id" : "c1f7caef-dc6c-4d70-aaa6-0503c2e9c832",
+              "type" : "component"
+            } ],
+            "id" : "b5df4c47-923c-41c6-8a9f-67352ce05cec",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "320e8ae9-0ad4-4812-84f1-9b5ef6435052",
+          "type" : "component"
+        } ],
+        "id" : "1c39814f-9aed-48ac-bebc-98effaa3e3a3",
+        "name" : "content",
+        "title" : "Content",
+        "type" : "region"
+      }, {
+        "children" : [ {
+          "attributes" : {
+            "customHeadTags" : "",
+            "description" : "",
+            "pageTitle" : "Projects",
+            "recordId" : "{!recordId}"
+          },
+          "definition" : "community_builder:seoAssistant",
+          "id" : "c278d987-5c1f-467e-ad8a-13e404211cda",
+          "type" : "component"
+        } ],
+        "id" : "7840ba9c-af84-4c8d-87b9-ee93022d4220",
+        "name" : "sfdcHiddenRegion",
+        "title" : "sfdcHiddenRegion",
+        "type" : "region"
+      } ],
+      "definition" : "community_layout:sldsFlexibleLayout",
+      "id" : "09200a42-1cf1-41be-b07a-68e5917c3e2a",
+      "type" : "component"
+    },
+    "dataProviders" : [ ],
+    "themeLayoutType" : "Inner",
+    "viewType" : "custom-projects"
+  },
+  "urlName" : "projects"
+}
