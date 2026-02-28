@@ -1,0 +1,718 @@
+/* portfolioAchievements.css
+   ── Luxury Trophy Cabinet Aesthetic
+   ── Playfair Display (editorial serif) + Jost (clean sans)
+   ── Deep midnight navy · Burnished gold · Warm cream
+*/
+/* External font import removed because LWC CSS cannot use @import
+   (LWC1535/LWC1009 error). Move the <link> to the component HTML or
+   include via a static resource or global page.
+   Example in portfolioAchievements.html:
+     <template>
+       <!-- markup -->
+       <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+     </template>
+*/
+
+/* ═══════════════════════════════════════════
+   HOST TOKENS
+═══════════════════════════════════════════ */
+:host {
+    /* Palette */
+    --midnight:  #06090F;
+    --navy:      #0B1120;
+    --navy-2:    #111C31;
+    --navy-3:    #182544;
+    --gold:      #C9960C;
+    --gold-2:    #E8B122;
+    --gold-3:    #F5D060;
+    --gold-pale: rgba(201,150,12,0.12);
+    --cream:     #F5EDD8;
+    --cream-dim: rgba(245,237,216,0.55);
+    --white:     #FFFFFF;
+    --border:    rgba(201,150,12,0.18);
+    --border-h:  rgba(201,150,12,0.55);
+    --text:      #D8E4F0;
+    --text-dim:  #6A84A0;
+    --radius-xl: 22px;
+    --radius-lg: 16px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+    /* per-card accent injected via style attribute */
+    --accent:    #C9960C;
+    --accent-dim:#C9960C22;
+    --accent-glow:#C9960C44;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION SHELL
+═══════════════════════════════════════════ */
+.ach-section {
+    position: relative;
+    background: var(--midnight);
+    padding: 5.5rem 1.5rem 6rem;
+    overflow: hidden;
+    font-family: 'Jost', sans-serif;
+    color: var(--text);
+}
+
+/* Background texture layers */
+.ach-bg  { position: absolute; inset: 0; pointer-events: none; }
+
+/* Subtle grain noise */
+.bg-noise {
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.35;
+}
+
+/* Vignette around edges */
+.bg-vignette {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 40%, rgba(0,0,0,0.55) 100%);
+}
+
+/* Diagonal gold rays */
+.bg-gold-ray {
+    position: absolute;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(201,150,12,0.12), transparent);
+    transform-origin: top center;
+}
+.bg-ray-1 { height: 80%; left: 25%; top: 0; transform: rotate(20deg); }
+.bg-ray-2 { height: 60%; right: 20%; top: 10%; transform: rotate(-18deg); }
+
+/* ═══════════════════════════════════════════
+   INNER WRAPPER
+═══════════════════════════════════════════ */
+.ach-inner {
+    position: relative; z-index: 1;
+    max-width: 1140px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+}
+
+/* ═══════════════════════════════════════════
+   SECTION HEADER
+═══════════════════════════════════════════ */
+.ach-header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    gap: 0.5rem 2.5rem;
+    align-items: start;
+}
+
+/* Trophy emblem */
+.header-emblem {
+    grid-row: 1 / 3;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px; height: 90px;
+    flex-shrink: 0;
+}
+
+.emblem-trophy {
+    font-size: 2.8rem;
+    position: relative; z-index: 1;
+    filter: drop-shadow(0 0 18px rgba(201,150,12,0.7))
+            drop-shadow(0 0 40px rgba(201,150,12,0.3));
+    animation: trophyPulse 3.5s ease-in-out infinite;
+}
+@keyframes trophyPulse {
+    0%,100% { filter: drop-shadow(0 0 14px rgba(201,150,12,0.6)) drop-shadow(0 0 30px rgba(201,150,12,0.2)); }
+    50%      { filter: drop-shadow(0 0 28px rgba(201,150,12,0.9)) drop-shadow(0 0 60px rgba(201,150,12,0.4)); }
+}
+
+.emblem-rings { position: absolute; inset: 0; }
+.er {
+    position: absolute; inset: 0;
+    border-radius: 50%;
+    border: 1px solid rgba(201,150,12,0.3);
+    animation: ringPulse 3s ease-out infinite;
+}
+.er1 { animation-delay: 0s; }
+.er2 { animation-delay: 1s; }
+@keyframes ringPulse {
+    0%   { transform: scale(0.5); opacity: 0.8; }
+    100% { transform: scale(2.2); opacity: 0; }
+}
+
+/* Header text */
+.header-overline {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--gold-2);
+    margin: 0;
+}
+
+.header-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.1;
+    margin: 0.3rem 0 0.75rem;
+    letter-spacing: -0.01em;
+}
+
+.header-desc {
+    color: var(--text-dim);
+    font-size: 0.95rem; font-weight: 300;
+    line-height: 1.65; margin: 0;
+    max-width: 520px;
+}
+
+/* Stats ribbon */
+.stats-ribbon {
+    grid-column: 1 / -1;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.75rem;
+    padding-top: 1.75rem;
+    border-top: 1px solid var(--border);
+}
+
+.ribbon-stat {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.6rem 1.25rem;
+    background: rgba(201,150,12,0.06);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    transition: all 0.25s;
+}
+.ribbon-stat:hover {
+    background: var(--gold-pale);
+    border-color: var(--border-h);
+    transform: translateY(-2px);
+}
+.rs-icon  { font-size: 1rem; }
+.rs-val   {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--gold-2);
+}
+.rs-label {
+    font-size: 0.72rem; font-weight: 500;
+    color: var(--text-dim);
+    text-transform: uppercase; letter-spacing: 0.08em;
+}
+
+/* ═══════════════════════════════════════════
+   LOADING SHIMMER
+═══════════════════════════════════════════ */
+.state-loading {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+.shimmer-card {
+    height: 260px;
+    background: linear-gradient(90deg, var(--navy) 25%, var(--navy-2) 50%, var(--navy) 75%);
+    background-size: 200% 100%;
+    border-radius: var(--radius-lg);
+    animation: shimmerSweep 1.5s ease infinite;
+}
+@keyframes shimmerSweep {
+    0%   { background-position: 200% center; }
+    100% { background-position: -200% center; }
+}
+
+.state-error {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding: 1.5rem; background: rgba(231,76,60,0.08);
+    border: 1px solid rgba(231,76,60,0.3);
+    border-radius: var(--radius-md); color: #FF6B6B;
+}
+.err-icon { font-size: 1.4rem; }
+
+/* ═══════════════════════════════════════════
+   FILTER TABS
+═══════════════════════════════════════════ */
+.filter-nav {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1.35rem;
+    border-radius: 50px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-dim);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.22s;
+    letter-spacing: 0.02em;
+}
+.filter-tab:hover:not(.filter-tab--active) {
+    border-color: var(--border-h);
+    color: var(--cream);
+    background: var(--gold-pale);
+}
+.filter-tab--active {
+    background: linear-gradient(135deg, var(--gold), var(--gold-2));
+    border-color: transparent;
+    color: var(--midnight);
+    font-weight: 700;
+    box-shadow: 0 4px 18px rgba(201,150,12,0.4);
+}
+.ft-icon  { font-size: 0.9rem; }
+.ft-count {
+    font-size: 0.68rem; font-weight: 700;
+    background: rgba(0,0,0,0.18);
+    border-radius: 10px;
+    padding: 0.1rem 0.45rem;
+    min-width: 20px; text-align: center;
+}
+.filter-tab--active .ft-count { background: rgba(0,0,0,0.2); }
+
+/* ═══════════════════════════════════════════
+   SUBSECTION
+═══════════════════════════════════════════ */
+.subsection {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    animation: sectionReveal 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+@keyframes sectionReveal {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+}
+
+/* Subsection divider title */
+.subsection-title {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem; font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold-2);
+    margin: 0;
+}
+.st-line {
+    flex: 1; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+.st-text { white-space: nowrap; flex-shrink: 0; }
+
+/* ═══════════════════════════════════════════
+   FEATURED AWARD CARDS
+═══════════════════════════════════════════ */
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.75rem;
+}
+
+.award-card--featured {
+    position: relative;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xl);
+    padding: 2rem 1.75rem 1.75rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    box-shadow:
+        0 4px 30px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.04);
+}
+.award-card--featured:hover {
+    transform: translateY(-7px);
+    border-color: var(--accent, var(--gold));
+    box-shadow:
+        0 16px 50px rgba(0,0,0,0.5),
+        0 0 40px var(--accent-glow, var(--gold-pale)),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* Shimmer sweep on hover */
+.card-shimmer {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        105deg,
+        transparent 30%,
+        rgba(255,255,255,0.04) 50%,
+        transparent 70%
+    );
+    background-size: 200% 100%;
+    opacity: 0;
+    transition: opacity 0.3s;
+    border-radius: inherit;
+    pointer-events: none;
+}
+.award-card--featured:hover .card-shimmer {
+    opacity: 1;
+    animation: shimmerOnce 0.6s ease forwards;
+}
+@keyframes shimmerOnce {
+    from { background-position: 200% center; }
+    to   { background-position: -100% center; }
+}
+
+/* Year seal — stamped corner badge */
+.year-seal {
+    position: absolute;
+    top: -1px; right: -1px;
+    background: linear-gradient(135deg, var(--accent, var(--gold)), var(--gold-2));
+    color: var(--midnight);
+    font-family: 'Playfair Display', serif;
+    font-size: 0.82rem; font-weight: 700;
+    padding: 0.35rem 1rem;
+    border-radius: 0 var(--radius-xl) 0 var(--radius-md);
+    letter-spacing: 0.06em;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+
+/* Icon */
+.card-icon-wrap {
+    position: relative;
+    width: 64px; height: 64px;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--accent-dim, var(--gold-pale));
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+    transition: background 0.3s;
+}
+.award-card--featured:hover .card-icon-wrap {
+    background: var(--accent-dim, var(--gold-pale));
+    border-color: var(--accent, var(--gold));
+}
+.card-icon { font-size: 1.8rem; position: relative; z-index: 1; }
+
+.icon-glow {
+    position: absolute; inset: -4px;
+    border-radius: 18px;
+    background: var(--accent-glow, var(--gold-pale));
+    filter: blur(10px);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.award-card--featured:hover .icon-glow { opacity: 1; }
+
+/* Card text */
+.card-body { flex: 1; }
+
+.card-issuer {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--accent, var(--gold-2));
+    margin: 0 0 0.4rem;
+    opacity: 0.85;
+}
+
+.card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; font-weight: 700;
+    color: var(--cream);
+    margin: 0 0 0.75rem;
+    line-height: 1.35;
+}
+
+.card-desc {
+    font-size: 0.85rem; font-weight: 300;
+    color: var(--text-dim);
+    line-height: 1.7;
+    margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Verify link */
+.card-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: 0.75rem; font-weight: 600;
+    letter-spacing: 0.06em;
+    color: var(--accent, var(--gold-2));
+    text-decoration: none;
+    padding: 0.3rem 0;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.2s, color 0.2s;
+    align-self: flex-start;
+    margin-top: auto;
+}
+.card-link:hover { border-bottom-color: var(--accent, var(--gold-2)); }
+
+/* Accent bar at card bottom */
+.card-accent-bar {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent, var(--gold)), transparent);
+    border-radius: 0 0 var(--radius-xl) var(--radius-xl);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.award-card--featured:hover .card-accent-bar { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   COMPACT AWARD LIST
+═══════════════════════════════════════════ */
+.compact-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.compact-award {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.9rem 1.25rem;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s, transform 0.2s;
+}
+.compact-award:hover {
+    border-color: var(--accent, var(--gold));
+    transform: translateX(6px);
+}
+.compact-award::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--accent, var(--gold));
+    border-radius: 2px 0 0 2px;
+}
+.ca-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent, var(--gold));
+    flex-shrink: 0;
+    box-shadow: 0 0 8px var(--accent, var(--gold));
+}
+.ca-icon  { font-size: 1.3rem; flex-shrink: 0; }
+.ca-info  { flex: 1; display: flex; flex-direction: column; }
+.ca-title { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+.ca-meta  { font-size: 0.72rem; color: var(--text-dim); }
+.ca-year-chip {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.78rem; font-weight: 700;
+    color: var(--accent, var(--gold));
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    flex-shrink: 0;
+}
+
+/* ═══════════════════════════════════════════
+   CERTIFICATIONS MOSAIC
+═══════════════════════════════════════════ */
+.certs-mosaic {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.25rem;
+}
+
+.cert-tile {
+    position: relative;
+    background: var(--navy);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem 1.4rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s, box-shadow 0.25s;
+}
+.cert-tile:hover {
+    transform: translateY(-5px);
+    border-color: var(--accent, var(--gold));
+    box-shadow: 0 10px 36px rgba(0,0,0,0.4),
+                0 0 24px var(--accent-glow, var(--gold-pale));
+}
+
+.cert-tile-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.25rem;
+}
+.cert-tile-icon { font-size: 1.6rem; }
+.cert-tile-year {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.75rem; font-weight: 700;
+    color: var(--accent, var(--gold));
+    padding: 0.15rem 0.55rem;
+    border: 1px solid var(--border);
+    border-radius: 20px;
+}
+
+.cert-tile-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--cream);
+    margin: 0; line-height: 1.35;
+}
+.cert-tile-issuer {
+    font-size: 0.72rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent, var(--gold-2));
+    margin: 0; opacity: 0.8;
+}
+.cert-tile-desc {
+    font-size: 0.8rem; color: var(--text-dim);
+    line-height: 1.6; margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+.cert-verify-link {
+    display: inline-block;
+    margin-top: auto;
+    padding-top: 0.5rem;
+    font-size: 0.72rem; font-weight: 600;
+    color: var(--accent, var(--gold-2));
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    border-bottom: 1px dashed var(--border-h);
+    align-self: flex-start;
+    transition: border-color 0.2s;
+}
+.cert-verify-link:hover { border-bottom-style: solid; }
+
+/* Bottom colour bar */
+.cert-tile-bar {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent, var(--gold)), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+}
+.cert-tile:hover .cert-tile-bar { opacity: 1; }
+
+/* ═══════════════════════════════════════════
+   GOODIES SECTION
+═══════════════════════════════════════════ */
+.goodies-intro {
+    font-size: 0.88rem; font-weight: 300;
+    color: var(--text-dim); line-height: 1.7;
+    margin: -1rem 0 0;
+    max-width: 560px;
+}
+
+.goodies-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1.1rem;
+}
+
+.goodie-card {
+    position: relative;
+    background: var(--navy-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 0 1.3rem 1.3rem;
+    overflow: hidden;
+    transition: transform 0.25s, border-color 0.25s;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+.goodie-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent, var(--gold));
+}
+
+/* Ribbon banner across top */
+.gc-ribbon {
+    height: 5px;
+    background: linear-gradient(90deg, var(--accent, var(--gold)), var(--gold-3), transparent);
+    margin: 0 -1.3rem;
+    width: calc(100% + 2.6rem);
+    margin-bottom: 0.5rem;
+}
+
+.gc-icon-wrap {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: var(--accent-dim, var(--gold-pale));
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+}
+.gc-icon { font-size: 1.5rem; }
+
+.gc-body { display: flex; flex-direction: column; gap: 0.25rem; }
+.gc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem; font-weight: 700;
+    color: var(--cream); margin: 0;
+    line-height: 1.3;
+}
+.gc-issuer {
+    font-size: 0.7rem; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--accent, var(--gold-2));
+    opacity: 0.8; margin: 0;
+}
+.gc-desc {
+    font-size: 0.78rem; color: var(--text-dim);
+    line-height: 1.6; margin: 0;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* ═══════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════ */
+@media (max-width: 900px) {
+    .ach-header { grid-template-columns: 1fr; }
+    .header-emblem { grid-row: 1; margin-bottom: 0.5rem; }
+}
+
+@media (max-width: 640px) {
+    .ach-section { padding: 3.5rem 1rem 4rem; }
+    .header-title { font-size: 2rem; }
+    .featured-grid { grid-template-columns: 1fr; }
+    .certs-mosaic  { grid-template-columns: 1fr; }
+    .goodies-grid  { grid-template-columns: 1fr 1fr; }
+    .stats-ribbon  { gap: 0.5rem; }
+    .ribbon-stat   { padding: 0.5rem 0.9rem; }
+}
+
+@media (max-width: 400px) {
+    .goodies-grid { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════
+   ACCESSIBILITY
+═══════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+    .emblem-trophy,
+    .er,
+    .shimmerSweep,
+    .shimmer-card,
+    .subsection { animation: none; }
+    .award-card--featured:hover,
+    .cert-tile:hover,
+    .goodie-card:hover,
+    .compact-award:hover,
+    .ribbon-stat:hover { transform: none; }
+}

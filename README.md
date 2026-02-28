@@ -28,6 +28,7 @@
   - [8. trailheadTrivia](#8-trailheadtrivia)
   - [9. submitRequest](#9-submitrequest)
   - [10. portfolioAgentWidget](#10-portfolioagentwidget)
+  - [11. portfolioAchievements](#11-portfolioachievements)
 - [Deployment Guide](#-deployment-guide)
 - [Static Resources Setup](#-static-resources-setup)
 - [Custom Metadata Setup](#-custom-metadata-setup)
@@ -55,6 +56,7 @@ This portfolio is built entirely on the **Salesforce platform** — no external 
 | Games landing page | `portfolioGames` | LWC |
 | Submit a Request form | `submitRequest` | LWC + Apex |
 | Agentforce AI chat widget | `portfolioAgentWidget` | LWC + Messaging for Web |
+| Achievements & Recognition | `portfolioAchievements` | LWC + Custom Metadata |
 
 ---
 
@@ -67,18 +69,21 @@ Experience Cloud (Public Site)
 │   ├── Home           → portfolioHero + portfolioSkillsCerts
 │   ├── Projects       → portfolioProjects
 │   ├── Games          → portfolioGames + memoryMatch + soqlSnake + sfQuiz + trailheadTrivia
+│   ├── Achievements   → portfolioAchievements
 │   └── Contact        → submitRequest
 │
 ├── Global (Theme Layout)
 │   └── portfolioAgentWidget  ← appears on all pages
 │
 ├── Apex Controllers
-│   ├── PortfolioSkillsController   ← reads Custom Metadata
-│   └── SubmitRequestController     ← inserts Portfolio_Request__c
+│   ├── PortfolioSkillsController        ← reads Custom Metadata
+│   ├── SubmitRequestController          ← inserts Portfolio_Request__c
+│   └── PortfolioAchievementsController  ← reads Portfolio_Achievement__mdt
 │
 ├── Custom Metadata Types
 │   ├── Portfolio_Skill__mdt
-│   └── Portfolio_Certification__mdt
+│   ├── Portfolio_Certification__mdt
+│   └── Portfolio_Achievement__mdt
 │
 ├── Custom Object
 │   └── Portfolio_Request__c
@@ -126,7 +131,7 @@ sf config set target-org portfolio-org
 | Salesforce CLI | 2.x+ | Deploy & retrieve metadata |
 | LWC API | 59.0 | All components use `lwc:if`, no `if:true` |
 | Apex API | 59.0 | Apex controllers |
-| Google Fonts (CDN) | — | `Syne`, `DM Sans`, `Orbitron`, `Nunito`, `Exo 2` |
+| Google Fonts (CDN) | — | `Syne`, `DM Sans`, `Orbitron`, `Nunito`, `Exo 2`, `Playfair Display`, `Jost` |
 | Experience Cloud | Winter '24+ | Public site hosting |
 | Agentforce | Spring '25+ | AI agent (component 10 only) |
 
@@ -155,6 +160,7 @@ force-app/
         │   ├── trailheadTrivia/
         │   ├── submitRequest/
         │   └── portfolioAgentWidget/
+        │   └── portfolioAchievements/
         │
         ├── classes/
         │   ├── PortfolioSkillsController.cls
@@ -165,6 +171,7 @@ force-app/
         ├── customMetadata/
         │   ├── Portfolio_Skill__mdt.*.md-meta.xml
         │   └── Portfolio_Certification__mdt.*.md-meta.xml
+        │   └── Portfolio_Achievement__mdt.*.md-meta.xml
         │
         └── objects/
             └── Portfolio_Request__c/
@@ -565,6 +572,135 @@ When Send is clicked and the record saves successfully:
 
 ---
 
+### 11. `portfolioAchievements`
+
+**Purpose:** A full-page "Hall of Fame" section that showcases Awards, Certifications and Community Goodies pulled from a single Custom Metadata type. Features a live filter tab system, spotlight cards for featured achievements, and dedicated mosaic grids for certs and goodies. All data is managed 100% in Salesforce — no code changes required to add or edit entries.
+
+#### Aesthetic
+Luxury Trophy Cabinet — `Playfair Display` editorial serif + `Jost` clean sans on a deep midnight navy background with burnished gold accents, diagonal ray highlights, and a subtle grain texture overlay.
+
+---
+
+#### Prerequisites
+- Custom Metadata Type `Portfolio_Achievement__mdt` must be created (see field table below)
+- Apex class `PortfolioAchievementsController` must be deployed
+- Guest User Profile must have **Apex Class Access** to `PortfolioAchievementsController`
+- CSP Trusted Site for Google Fonts must be added (shared with other components)
+
+#### Dependencies
+| Dependency | Purpose |
+|---|---|
+| `PortfolioAchievementsController.cls` | Queries all active `Portfolio_Achievement__mdt` records |
+| `Portfolio_Achievement__mdt` | Single metadata type for Awards, Certs, and Goodies |
+| Google Fonts: `Playfair Display`, `Jost` | Luxury editorial typography |
+
+---
+
+#### Custom Metadata Type: `Portfolio_Achievement__mdt`
+
+> **One metadata type handles all three sections** — the `Category__c` picklist value determines which section each record appears in.
+
+| Field Label | API Name | Type | Required | Notes |
+|---|---|---|---|---|
+| Title | `Title__c` | Text(255) | ✅ | e.g. "Q2 SPOT Award" |
+| Issuer | `Issuer__c` | Text(255) | ✅ | e.g. "Verticurl", "Salesforce" |
+| Year | `Year__c` | Text(10) | ✅ | e.g. "2024" |
+| Description | `Description__c` | Long Text Area (32768) | — | Full detail shown on card |
+| Category | `Category__c` | Picklist | ✅ | `Award` \| `Certificate` \| `Goodie` |
+| Icon Emoji | `Icon_Emoji__c` | Text(10) | — | e.g. `🏆`, `⭐`, `🚀`, `🎓`, `🎁` |
+| Badge Color | `Badge_Color__c` | Text(10) | — | Hex value e.g. `#FFD700` — drives card accent colour |
+| Is Featured | `Is_Featured__c` | Checkbox | — | `true` = renders as large spotlight card in Awards |
+| Is Active | `Is_Active__c` | Checkbox | ✅ | Set `false` to hide without deleting |
+| Detail URL | `Detail_URL__c` | URL | — | Optional "Verify ↗" link on the card |
+| Sort Order | `Sort_Order__c` | Number(3,0) | — | Controls display order (ascending) |
+
+---
+
+#### Pre-loaded Records (add via Manage Records)
+
+**Awards:**
+
+| Title | Issuer | Year | Category | Icon | Color | Featured |
+|---|---|---|---|---|---|---|
+| Winner of Salesforce Developer Program | Salesforce | 2021 | Award | 🏆 | `#FFD700` | ✅ |
+| Q2 SPOT Award | Verticurl | 2022 | Award | ⭐ | `#00A1E0` | ✅ |
+| Transformer of the Month Award | Verticurl | 2024 | Award | 🚀 | `#9B59B6` | ✅ |
+
+**Recommended Descriptions to paste into `Description__c`:**
+
+```
+Winner of Salesforce Developer Program (2021):
+Recognised as a top-performing developer in the annual Salesforce Developer Program for
+outstanding contributions to the Salesforce ecosystem through innovative solutions and
+best-practice implementations across Sales Cloud, Service Cloud, and Experience Cloud.
+
+Q2 SPOT Award (2022):
+Honored with the Q2 SPOT (Special Performance On Target) Award at Verticurl in recognition
+of exceptional client delivery, cross-team collaboration, and exceeding performance
+benchmarks during Q2 2022. Awarded for contributions to a critical global Salesforce
+implementation project.
+
+Transformer of the Month Award (2024):
+Awarded Transformer of the Month at Verticurl for driving a high-impact digital
+transformation initiative, demonstrating leadership and delivering measurable results for
+a global client within an aggressive timeline.
+```
+
+**Certificates (examples):**
+
+| Title | Issuer | Year | Category | Icon | Color |
+|---|---|---|---|---|---|
+| Salesforce Certified Administrator | Salesforce | 2022 | Certificate | 🛡️ | `#00A1E0` |
+| Salesforce Platform Developer I | Salesforce | 2022 | Certificate | ⚡ | `#0070D2` |
+| Salesforce Data Cloud Consultant | Salesforce | 2023 | Certificate | 📦 | `#032D60` |
+| Salesforce Certified AI Specialist | Salesforce | 2024 | Certificate | 🤖 | `#9B59B6` |
+
+**Goodies (examples):**
+
+| Title | Issuer | Year | Category | Icon | Color |
+|---|---|---|---|---|---|
+| Salesforce Trailblazer Hoodie | Salesforce | 2021 | Goodie | 👕 | `#27AE60` |
+| Salesforce Developer Swag Pack | Salesforce | 2022 | Goodie | 🎁 | `#E67E22` |
+
+---
+
+#### How to Add a New Achievement in Future (No Code Required)
+1. Setup → Custom Metadata Types → **Portfolio Achievement** → Manage Records
+2. Click **New**
+3. Fill in: Title, Issuer, Year, Description, Category, Icon Emoji, Badge Color
+4. Set `Is_Active__c = true`
+5. Set `Is_Featured__c = true` if you want a large spotlight card in the Awards section
+6. Save — the component picks it up automatically on the next page load (cached wire)
+
+> To force cache refresh after adding records: bump the Apex method's `@AuraEnabled(cacheable=true)` by making a minor whitespace edit to the class and redeploying.
+
+---
+
+#### Filter Tab Behaviour
+The four filter tabs — **All / Awards / Certifications / Goodies** — are dynamically generated from the data. The count badge on each tab reflects the live number of active records in that category. Clicking a tab re-renders only that category's panel (the others are fully removed from the DOM via `lwc:if`).
+
+#### Visual Hierarchy in Awards Section
+- **Featured awards** (`Is_Featured__c = true`) render as large premium spotlight cards with:
+  - Animated shimmer sweep on hover
+  - Stamped year seal (gold corner badge)
+  - Per-card accent colour from `Badge_Color__c`
+  - Glowing icon block
+  - 4-line clamped description
+- **Non-featured awards** render as compact horizontal list items with a coloured left border and year chip
+
+#### Manual Steps
+1. Create `Portfolio_Achievement__mdt` in Setup with all fields listed above
+2. Add the `Category__c` picklist values: `Award`, `Certificate`, `Goodie`
+3. Insert records via Manage Records
+4. Deploy `PortfolioAchievementsController.cls`
+5. Grant Guest User Profile Apex Class access to `PortfolioAchievementsController`
+6. Deploy the LWC component (4 files)
+7. Create an **Achievements** page in Experience Builder
+8. Drag `portfolioAchievements` onto the page
+9. Publish the site
+
+---
+
 ## 🚀 Deployment Guide
 
 ### Deploy All Components at Once
@@ -603,9 +739,9 @@ sf project retrieve start --metadata LightningComponentBundle ApexClass CustomOb
 > Always deploy in this order to avoid dependency errors:
 
 ```
-1. Apex Classes          (PortfolioSkillsController, SubmitRequestController)
+1. Apex Classes          (PortfolioSkillsController, SubmitRequestController, PortfolioAchievementsController)
 2. Custom Objects         (Portfolio_Request__c)
-3. Custom Metadata Types  (Portfolio_Skill__mdt, Portfolio_Certification__mdt)
+3. Custom Metadata Types  (Portfolio_Skill__mdt, Portfolio_Certification__mdt, Portfolio_Achievement__mdt)
 4. LWC Components         (all)
 5. Static Resources       (durgarao_image, Durgarao_Resume) — via UI
 ```
@@ -649,6 +785,15 @@ Custom Metadata records are the "database" for Skills and Certifications. They a
 3. Add all fields
 4. Click **Manage Records** → add one record per certification
 
+### Create `Portfolio_Achievement__mdt`
+1. Setup → Custom Metadata Types → **New**
+2. Label: `Portfolio Achievement` | Plural: `Portfolio Achievements` | API Name: `Portfolio_Achievement__mdt`
+3. Add all fields from the [portfolioAchievements](#11-portfolioachievements) field table
+4. Add `Category__c` Picklist with values: `Award`, `Certificate`, `Goodie`
+5. Click **Manage Records** → add your awards, certs, and goodies
+6. Set `Is_Active__c = true` on every record you want displayed
+7. Set `Is_Featured__c = true` on records you want as large spotlight cards
+
 > 💡 Custom Metadata records can also be deployed via CLI by placing them in `force-app/main/default/customMetadata/` as XML files.
 
 ---
@@ -669,6 +814,7 @@ Setup → Digital Experiences → All Sites → **[Your Site]** → Workspaces �
 | Create on `Portfolio_Request__c` | Object Settings | Submit Request form |
 | Apex: `PortfolioSkillsController` | Apex Class Access | Skills & Certs data |
 | Apex: `SubmitRequestController` | Apex Class Access | Request form submit |
+| Apex: `PortfolioAchievementsController` | Apex Class Access | Achievements data |
 | Messaging for Web permission | Connected Apps | Agentforce chat |
 
 ---
@@ -720,6 +866,16 @@ Add these in Setup → Security → **CSP Trusted Sites** → New. Check **all A
 - Check `Portfolio_Request__c` object exists with all required fields
 - Check Guest User Profile has **Create** permission on the object
 - Check Apex class is whitelisted in Guest Profile
+
+### Achievements section shows empty or no cards
+- Check `Portfolio_Achievement__mdt` records have `Is_Active__c = true`
+- Verify `Category__c` picklist values are exactly `Award`, `Certificate`, `Goodie` (case-sensitive)
+- Confirm Guest User Profile has Apex Class access to `PortfolioAchievementsController`
+- Open browser DevTools → Network → filter by `PortfolioAchievementsController` to check for 401/403
+
+### Achievements showing wrong section (Award appearing in Goodies etc.)
+- Check the `Category__c` picklist value on the record matches exactly (no trailing spaces)
+- Picklist values are case-sensitive: `Award` not `award` or `AWARD`
 
 ### Deploy fails with `Entity of type Metadata is not available`
 - The target org may not have Experience Cloud enabled

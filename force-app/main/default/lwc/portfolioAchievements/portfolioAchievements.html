@@ -1,0 +1,248 @@
+<!-- portfolioAchievements.html -->
+<template>
+    <section class="ach-section">
+
+        <!-- Luxury background texture layers -->
+        <div class="ach-bg" aria-hidden="true">
+            <div class="bg-noise"></div>
+            <div class="bg-vignette"></div>
+            <div class="bg-gold-ray bg-ray-1"></div>
+            <div class="bg-gold-ray bg-ray-2"></div>
+        </div>
+
+        <div class="ach-inner">
+
+            <!-- ══ SECTION HEADER ══ -->
+            <header class="ach-header">
+                <div class="header-emblem" aria-hidden="true">
+                    <span class="emblem-trophy">🏆</span>
+                    <div class="emblem-rings">
+                        <span class="er er1"></span>
+                        <span class="er er2"></span>
+                    </div>
+                </div>
+                <div class="header-text">
+                    <p class="header-overline">Hall of Fame</p>
+                    <h2 class="header-title">Achievements &amp;<br/>Recognition</h2>
+                    <p class="header-desc">
+                        Awards, honours and community recognition earned across
+                        6+ years of Salesforce development.
+                    </p>
+                </div>
+
+                <!-- Stats ribbon -->
+                <div class="stats-ribbon">
+                    <template for:each={summaryStats} for:item="s">
+                        <div key={s.id} class="ribbon-stat">
+                            <span class="rs-icon">{s.icon}</span>
+                            <span class="rs-val">{s.value}</span>
+                            <span class="rs-label">{s.label}</span>
+                        </div>
+                    </template>
+                </div>
+            </header>
+
+            <!-- ══ LOADING ══ -->
+            <template lwc:if={isLoading}>
+                <div class="state-loading">
+                    <div class="shimmer-card"></div>
+                    <div class="shimmer-card"></div>
+                    <div class="shimmer-card"></div>
+                </div>
+            </template>
+
+            <!-- ══ ERROR ══ -->
+            <template lwc:if={hasError}>
+                <div class="state-error" role="alert">
+                    <span class="err-icon">⚠️</span>
+                    <p>Unable to load achievements. Please refresh the page.</p>
+                </div>
+            </template>
+
+            <!-- ══ CONTENT ══ -->
+            <template lwc:if={hasData}>
+
+                <!-- ── CATEGORY FILTER TABS ── -->
+                <nav class="filter-nav" role="tablist" aria-label="Achievement categories">
+                    <template for:each={filterTabs} for:item="tab">
+                        <button
+                            key={tab.id}
+                            class={tab.btnClass}
+                            onclick={setFilter}
+                            data-filter={tab.id}
+                            role="tab"
+                            aria-selected={tab.isActive}
+                        >
+                            <span class="ft-icon">{tab.icon}</span>
+                            <span class="ft-label">{tab.label}</span>
+                            <span class="ft-count">{tab.count}</span>
+                        </button>
+                    </template>
+                </nav>
+
+                <!-- ── AWARDS SECTION ── -->
+                <template lwc:if={showAwards}>
+                    <div class="subsection" role="tabpanel">
+                        <h3 class="subsection-title">
+                            <span class="st-line"></span>
+                            <span class="st-text">🏆 Awards &amp; Honours</span>
+                            <span class="st-line"></span>
+                        </h3>
+
+                        <!-- Featured awards — large spotlight cards -->
+                        <template lwc:if={hasFeatured}>
+                            <div class="featured-grid">
+                                <template for:each={featuredAwards} for:item="ach">
+                                    <article
+                                        key={ach.MasterLabel}
+                                        class="award-card award-card--featured"
+                                        style={ach.cardVars}
+                                    >
+                                        <!-- Animated gold shimmer on featured -->
+                                        <div class="card-shimmer" aria-hidden="true"></div>
+
+                                        <!-- Year seal -->
+                                        <div class="year-seal" aria-label={ach.Year__c}>
+                                            {ach.Year__c}
+                                        </div>
+
+                                        <!-- Icon -->
+                                        <div class="card-icon-wrap">
+                                            <span class="card-icon">{ach.Icon_Emoji__c}</span>
+                                            <div class="icon-glow" aria-hidden="true"></div>
+                                        </div>
+
+                                        <!-- Body -->
+                                        <div class="card-body">
+                                            <p class="card-issuer">{ach.Issuer__c}</p>
+                                            <h3 class="card-title">{ach.Title__c}</h3>
+                                            <p class="card-desc">{ach.Description__c}</p>
+                                        </div>
+
+                                        <!-- Verify link -->
+                                        <template lwc:if={ach.Detail_URL__c}>
+                                            <a
+                                                href={ach.Detail_URL__c}
+                                                class="card-link"
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                aria-label="Verify {ach.Title__c}"
+                                            >
+                                                Verify ↗
+                                            </a>
+                                        </template>
+
+                                        <!-- Bottom accent bar -->
+                                        <div class="card-accent-bar" aria-hidden="true"></div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Non-featured awards — compact list -->
+                        <template lwc:if={hasRegularAwards}>
+                            <div class="compact-list">
+                                <template for:each={regularAwards} for:item="ach">
+                                    <div
+                                        key={ach.MasterLabel}
+                                        class="compact-award"
+                                        style={ach.compactVars}
+                                    >
+                                        <div class="ca-dot" aria-hidden="true"></div>
+                                        <span class="ca-icon">{ach.Icon_Emoji__c}</span>
+                                        <div class="ca-info">
+                                            <span class="ca-title">{ach.Title__c}</span>
+                                            <span class="ca-meta">{ach.Issuer__c} · {ach.Year__c}</span>
+                                        </div>
+                                        <span class="ca-year-chip">{ach.Year__c}</span>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </div>
+                </template>
+
+                <!-- ── CERTIFICATES SECTION ── -->
+                <template lwc:if={showCertificates}>
+                    <div class="subsection" role="tabpanel">
+                        <h3 class="subsection-title">
+                            <span class="st-line"></span>
+                            <span class="st-text">🎓 Certifications</span>
+                            <span class="st-line"></span>
+                        </h3>
+
+                        <div class="certs-mosaic">
+                            <template for:each={certificates} for:item="cert">
+                                <article
+                                    key={cert.MasterLabel}
+                                    class="cert-tile"
+                                    style={cert.cardVars}
+                                >
+                                    <div class="cert-tile-top">
+                                        <span class="cert-tile-icon">{cert.Icon_Emoji__c}</span>
+                                        <span class="cert-tile-year">{cert.Year__c}</span>
+                                    </div>
+                                    <h4 class="cert-tile-title">{cert.Title__c}</h4>
+                                    <p class="cert-tile-issuer">{cert.Issuer__c}</p>
+                                    <template lwc:if={cert.Description__c}>
+                                        <p class="cert-tile-desc">{cert.Description__c}</p>
+                                    </template>
+                                    <template lwc:if={cert.Detail_URL__c}>
+                                        <a
+                                            href={cert.Detail_URL__c}
+                                            class="cert-verify-link"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >Verify Credential ↗</a>
+                                    </template>
+                                    <div class="cert-tile-bar" aria-hidden="true"></div>
+                                </article>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+                <!-- ── GOODIES SECTION ── -->
+                <template lwc:if={showGoodies}>
+                    <div class="subsection" role="tabpanel">
+                        <h3 class="subsection-title">
+                            <span class="st-line"></span>
+                            <span class="st-text">🎁 Community Goodies</span>
+                            <span class="st-line"></span>
+                        </h3>
+                        <p class="goodies-intro">
+                            Swag, perks and community rewards earned through active Salesforce ecosystem participation.
+                        </p>
+
+                        <div class="goodies-grid">
+                            <template for:each={goodies} for:item="g">
+                                <article
+                                    key={g.MasterLabel}
+                                    class="goodie-card"
+                                    style={g.cardVars}
+                                >
+                                    <div class="gc-ribbon" aria-hidden="true"></div>
+                                    <div class="gc-icon-wrap">
+                                        <span class="gc-icon">{g.Icon_Emoji__c}</span>
+                                    </div>
+                                    <div class="gc-body">
+                                        <h4 class="gc-title">{g.Title__c}</h4>
+                                        <p class="gc-issuer">{g.Issuer__c} · {g.Year__c}</p>
+                                        <template lwc:if={g.Description__c}>
+                                            <p class="gc-desc">{g.Description__c}</p>
+                                        </template>
+                                    </div>
+                                </article>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+
+            </template>
+            <!-- ── end hasData ── -->
+
+        </div>
+        <!-- ── end inner ── -->
+
+    </section>
+</template>

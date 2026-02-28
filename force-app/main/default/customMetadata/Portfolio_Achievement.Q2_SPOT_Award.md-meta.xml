@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Q2 SPOT Award</label>
+    <protected>false</protected>
+    <values>
+        <field>Badge_Color__c</field>
+        <value xsi:type="xsd:string">#00A1E0</value>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">Award</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">Honored with the Q2 SPOT (Special Performance On Target) Award at Verticurl in recognition of exceptional client delivery, cross-team collaboration, and exceeding performance benchmarks during Q2 2022.</value>
+    </values>
+    <values>
+        <field>Detail_URL__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>Icon_Emoji__c</field>
+        <value xsi:type="xsd:string">⭐</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Is_Featured__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Issuer__c</field>
+        <value xsi:type="xsd:string">Verticurl</value>
+    </values>
+    <values>
+        <field>Sort_Order__c</field>
+        <value xsi:type="xsd:double">2.0</value>
+    </values>
+    <values>
+        <field>Title__c</field>
+        <value xsi:type="xsd:string">Q2 SPOT Award</value>
+    </values>
+    <values>
+        <field>Year__c</field>
+        <value xsi:type="xsd:string">2022</value>
+    </values>
+</CustomMetadata>
