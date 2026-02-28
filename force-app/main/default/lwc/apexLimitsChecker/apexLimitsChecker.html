@@ -1,0 +1,135 @@
+<template>
+    <div class="alc-root">
+
+        <!-- Animated grid background -->
+        <div class="alc-grid-bg" aria-hidden="true"></div>
+
+        <!-- Mission header -->
+        <header class="alc-header">
+            <div class="header-left">
+                <div class="status-cluster">
+                    <span class="status-ring" aria-hidden="true"></span>
+                    <span class="status-label">APEX MONITOR</span>
+                </div>
+                <h2 class="header-title">Governor Limits Checker</h2>
+                <p class="header-sub">Real-time limit usage tracker &amp; reference guide</p>
+            </div>
+            <div class="header-right">
+                <div class="mode-switch">
+                    <button class={syncBtnClass}  onclick={setSync}>Sync</button>
+                    <button class={asyncBtnClass} onclick={setAsync}>Async</button>
+                </div>
+                <button class="reset-btn" onclick={resetAll} aria-label="Reset all values">↺ Reset</button>
+            </div>
+        </header>
+
+        <!-- Overall health bar -->
+        <div class="health-strip">
+            <span class="health-label">SYSTEM HEALTH</span>
+            <div class="health-track">
+                <div class="health-fill" style={healthFillStyle} aria-label={healthPct}></div>
+            </div>
+            <span class="health-pct" style={healthPctStyle}>{healthPct}</span>
+            <span class="health-status" style={healthStatusStyle}>{healthStatus}</span>
+        </div>
+
+        <!-- Limit cards grid -->
+        <div class="limits-grid">
+            <template for:each={limitCards} for:item="card">
+                <div key={card.id} class={card.cardClass}>
+
+                    <!-- Card header -->
+                    <div class="card-top">
+                        <div class="card-icon-wrap" style={card.iconBg}>
+                            <span class="card-icon">{card.icon}</span>
+                        </div>
+                        <div class="card-meta">
+                            <span class="card-name">{card.name}</span>
+                            <span class="card-context">{card.context}</span>
+                        </div>
+                        <div class="card-badge" style={card.badgeStyle}>{card.status}</div>
+                    </div>
+
+                    <!-- Usage input row -->
+                    <div class="card-input-row">
+                        <label class="card-input-label">Used:</label>
+                        <input
+                            type="number"
+                            class="card-input"
+                            min="0"
+                            max={card.maxVal}
+                            value={card.used}
+                            oninput={onUsedChange}
+                            data-id={card.id}
+                            aria-label={card.name}
+                        />
+                        <span class="card-input-sep">/</span>
+                        <span class="card-max">{card.maxLabel}</span>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div class="card-bar-track">
+                        <div class="card-bar-fill" style={card.barStyle}></div>
+                        <!-- Danger threshold tick -->
+                        <div class="card-bar-tick" style={card.tickStyle} aria-hidden="true"></div>
+                    </div>
+                    <div class="card-bar-labels">
+                        <span class="bar-pct">{card.pct}%</span>
+                        <span class="bar-remaining">{card.remaining} remaining</span>
+                    </div>
+
+                    <!-- Warning message -->
+                    <template lwc:if={card.showWarning}>
+                        <div class="card-warning" role="alert">
+                            <span class="warn-icon">⚠</span>
+                            <span class="warn-text">{card.warningText}</span>
+                        </div>
+                    </template>
+
+                    <!-- Info tooltip -->
+                    <div class="card-info">
+                        <span class="info-icon">ℹ</span>
+                        <span class="info-text">{card.tip}</span>
+                    </div>
+
+                </div>
+            </template>
+        </div>
+
+        <!-- Quick reference table -->
+        <div class="ref-section">
+            <div class="ref-header">
+                <span class="ref-title">📋 Quick Reference — All Governor Limits</span>
+                <button class="ref-toggle" onclick={toggleRef} aria-expanded={showRef}>
+                    <template lwc:if={showRef}>▲ Hide</template>
+                    <template lwc:else>▼ Show</template>
+                </button>
+            </div>
+            <template lwc:if={showRef}>
+                <div class="ref-table-wrap">
+                    <table class="ref-table" role="table">
+                        <thead>
+                            <tr>
+                                <th>Limit</th>
+                                <th>Sync</th>
+                                <th>Async</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={refRows} for:item="r">
+                                <tr key={r.id} class={r.rowClass}>
+                                    <td class="ref-name">{r.name}</td>
+                                    <td class="ref-sync">{r.sync}</td>
+                                    <td class="ref-async">{r.async}</td>
+                                    <td class="ref-notes">{r.notes}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </div>
+
+    </div>
+</template>

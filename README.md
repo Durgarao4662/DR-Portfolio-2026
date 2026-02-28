@@ -1,12 +1,13 @@
 # ⚡ Durgarao Telagareddi — Salesforce Experience Cloud Portfolio
 
-> A fully custom-built public portfolio website powered by **Salesforce Experience Cloud**, built with Lightning Web Components (LWC), Agentforce AI, and Apex — featuring interactive games, a skills showcase, and an AI-powered chat assistant.
+> A fully custom-built public portfolio website powered by **Salesforce Experience Cloud**, built with Lightning Web Components (LWC), Agentforce AI, and Apex — featuring interactive games, a skills showcase, an AI-powered chat assistant, and a suite of developer productivity tools.
 
 [![Salesforce](https://img.shields.io/badge/Salesforce-Experience%20Cloud-00A1E0?logo=salesforce&logoColor=white)](https://www.salesforce.com)
 [![LWC](https://img.shields.io/badge/LWC-API%2059.0-0070D2?logo=salesforce&logoColor=white)](https://developer.salesforce.com/docs/component-library)
 [![Apex](https://img.shields.io/badge/Apex-Salesforce-032D60)](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/)
 [![Agentforce](https://img.shields.io/badge/Agentforce-AI%20Agent-9B59B6)](https://www.salesforce.com/agentforce/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-FFD700)](LICENSE)
+[![Components](https://img.shields.io/badge/Components-15%20LWC-FFD700)](https://developer.salesforce.com/docs/component-library)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
 
@@ -29,6 +30,10 @@
   - [9. submitRequest](#9-submitrequest)
   - [10. portfolioAgentWidget](#10-portfolioagentwidget)
   - [11. portfolioAchievements](#11-portfolioachievements)
+  - [12. devToolsHub](#12-devtoolshub)
+  - [13. soqlBuilder](#13-soqlbuilder)
+  - [14. apexLimitsChecker](#14-apexlimitschecker)
+  - [15. jsonToApex](#15-jsontoapex)
 - [Deployment Guide](#-deployment-guide)
 - [Static Resources Setup](#-static-resources-setup)
 - [Custom Metadata Setup](#-custom-metadata-setup)
@@ -41,9 +46,10 @@
 
 ## 🌐 Project Overview
 
-This portfolio is built entirely on the **Salesforce platform** — no external hosting, no WordPress, no third-party CMS. Every page, game, form, and animation is a native Salesforce Lightning Web Component deployed to an Experience Cloud public site.
+This portfolio is built entirely on the **Salesforce platform** — no external hosting, no WordPress, no third-party CMS. Every page, game, form, animation, and developer tool is a native Salesforce Lightning Web Component deployed to an Experience Cloud public site.
 
-**Live features:**
+**15 LWC components · 3 Apex controllers · 3 Custom Metadata types · 1 Custom Object · 0 external servers**
+
 | Feature | Component | Type |
 |---|---|---|
 | Hero section with profile & summary | `portfolioHero` | LWC |
@@ -57,6 +63,10 @@ This portfolio is built entirely on the **Salesforce platform** — no external 
 | Submit a Request form | `submitRequest` | LWC + Apex |
 | Agentforce AI chat widget | `portfolioAgentWidget` | LWC + Messaging for Web |
 | Achievements & Recognition | `portfolioAchievements` | LWC + Custom Metadata |
+| Developer Tools Hub | `devToolsHub` | LWC (parent container) |
+| SOQL Query Builder | `soqlBuilder` | LWC (child tool) |
+| Governor Limits Checker | `apexLimitsChecker` | LWC (child tool) |
+| JSON → Apex Generator | `jsonToApex` | LWC (child tool) |
 
 ---
 
@@ -68,17 +78,18 @@ Experience Cloud (Public Site)
 ├── Experience Builder Pages
 │   ├── Home           → portfolioHero + portfolioSkillsCerts
 │   ├── Projects       → portfolioProjects
-│   ├── Games          → portfolioGames + memoryMatch + soqlSnake + sfQuiz + trailheadTrivia
+│   ├── Games          → portfolioGames → memoryMatch, soqlSnake, sfQuiz, trailheadTrivia
 │   ├── Achievements   → portfolioAchievements
+│   ├── Dev Tools      → devToolsHub → soqlBuilder, apexLimitsChecker, jsonToApex
 │   └── Contact        → submitRequest
 │
-├── Global (Theme Layout)
-│   └── portfolioAgentWidget  ← appears on all pages
+├── Global (Theme Layout — appears on all pages)
+│   └── portfolioAgentWidget
 │
 ├── Apex Controllers
-│   ├── PortfolioSkillsController        ← reads Custom Metadata
-│   ├── SubmitRequestController          ← inserts Portfolio_Request__c
-│   └── PortfolioAchievementsController  ← reads Portfolio_Achievement__mdt
+│   ├── PortfolioSkillsController        ← queries Portfolio_Skill__mdt + Portfolio_Certification__mdt
+│   ├── SubmitRequestController          ← inserts Portfolio_Request__c records
+│   └── PortfolioAchievementsController  ← queries Portfolio_Achievement__mdt
 │
 ├── Custom Metadata Types
 │   ├── Portfolio_Skill__mdt
@@ -89,15 +100,13 @@ Experience Cloud (Public Site)
 │   └── Portfolio_Request__c
 │
 └── Static Resources
-    ├── durgarao_image   (profile photo)
-    └── Durgarao_Resume  (PDF resume)
+    ├── durgarao_image   (profile photo — Cache Control: Public)
+    └── Durgarao_Resume  (PDF resume   — Cache Control: Public)
 ```
 
 ---
 
 ## ✅ Global Prerequisites
-
-Before deploying any component, ensure the following are in place.
 
 ### Salesforce Org Requirements
 - Salesforce org with **Experience Cloud** enabled (Developer Edition or above)
@@ -106,17 +115,10 @@ Before deploying any component, ensure the following are in place.
 - **VS Code** with the **Salesforce Extension Pack** installed
 
 ### Local Machine Requirements
-- Node.js 18+ (for SFDX tooling)
+- Node.js 18+
 - Git 2.x+
-- A GitHub account with this repository cloned locally
 
-### Check your CLI version
-```bash
-sf version
-# Should show @salesforce/cli/2.x.x or higher
-```
-
-### Authenticate VS Code to your org
+### Authenticate to your org
 ```bash
 sf org login web --alias portfolio-org
 sf config set target-org portfolio-org
@@ -129,13 +131,27 @@ sf config set target-org portfolio-org
 | Dependency | Version | Purpose |
 |---|---|---|
 | Salesforce CLI | 2.x+ | Deploy & retrieve metadata |
-| LWC API | 59.0 | All components use `lwc:if`, no `if:true` |
-| Apex API | 59.0 | Apex controllers |
-| Google Fonts (CDN) | — | `Syne`, `DM Sans`, `Orbitron`, `Nunito`, `Exo 2`, `Playfair Display`, `Jost` |
+| LWC API | 59.0 | All components use `lwc:if` — not the deprecated `if:true` |
+| Apex API | 59.0 | All Apex controllers |
 | Experience Cloud | Winter '24+ | Public site hosting |
 | Agentforce | Spring '25+ | AI agent (component 10 only) |
 
-> **Font note:** All Google Fonts are loaded via `@import` in each component's CSS. Add `https://fonts.googleapis.com` and `https://fonts.gstatic.com` to CSP Trusted Sites.
+**Google Fonts used across all components:**
+
+| Component(s) | Fonts |
+|---|---|
+| portfolioHero, submitRequest | `Syne`, `DM Sans` |
+| sfQuiz | `Exo 2`, `DM Sans` |
+| trailheadTrivia | `Nunito`, `Fira Code` |
+| memoryMatch | `Orbitron`, `Rajdhani` |
+| soqlSnake | `Orbitron`, `Share Tech Mono` |
+| portfolioAchievements | `Playfair Display`, `Jost` |
+| soqlBuilder | `Fira Code`, `IBM Plex Sans` |
+| apexLimitsChecker | `Rajdhani`, `Share Tech Mono`, `IBM Plex Sans` |
+| jsonToApex | `JetBrains Mono`, `Outfit` |
+| devToolsHub | `Syne`, `Manrope` |
+
+> All fonts load via `@import` in each component's CSS. Add `https://fonts.googleapis.com` and `https://fonts.gstatic.com` to CSP Trusted Sites.
 
 ---
 
@@ -159,18 +175,24 @@ force-app/
         │   ├── sfQuiz/
         │   ├── trailheadTrivia/
         │   ├── submitRequest/
-        │   └── portfolioAgentWidget/
-        │   └── portfolioAchievements/
+        │   ├── portfolioAgentWidget/
+        │   ├── portfolioAchievements/
+        │   ├── soqlBuilder/            ← deploy BEFORE devToolsHub
+        │   ├── apexLimitsChecker/      ← deploy BEFORE devToolsHub
+        │   ├── jsonToApex/             ← deploy BEFORE devToolsHub
+        │   └── devToolsHub/            ← deploy LAST (depends on above 3)
         │
         ├── classes/
         │   ├── PortfolioSkillsController.cls
         │   ├── PortfolioSkillsController.cls-meta.xml
         │   ├── SubmitRequestController.cls
-        │   └── SubmitRequestController.cls-meta.xml
+        │   ├── SubmitRequestController.cls-meta.xml
+        │   ├── PortfolioAchievementsController.cls
+        │   └── PortfolioAchievementsController.cls-meta.xml
         │
         ├── customMetadata/
         │   ├── Portfolio_Skill__mdt.*.md-meta.xml
-        │   └── Portfolio_Certification__mdt.*.md-meta.xml
+        │   ├── Portfolio_Certification__mdt.*.md-meta.xml
         │   └── Portfolio_Achievement__mdt.*.md-meta.xml
         │
         └── objects/
@@ -178,6 +200,8 @@ force-app/
                 ├── Portfolio_Request__c.object-meta.xml
                 └── fields/
 ```
+
+> Each LWC folder contains 4 files: `.html`, `.js`, `.css`, `.js-meta.xml`
 
 ---
 
@@ -187,102 +211,74 @@ force-app/
 
 ### 1. `portfolioHero`
 
-**Purpose:** Full-width hero section at the top of the portfolio homepage. Displays profile photo, name (typewriter animation), job title, location, profile summary, stat counters, and CTA buttons.
+**Purpose:** Full-width hero section. Displays profile photo, animated name typewriter, job title, location, profile summary, stat counters, and CTA buttons.
 
 #### Prerequisites
-- Two Static Resources uploaded (see [Static Resources Setup](#-static-resources-setup)):
-  - `durgarao_image` — profile photo (PNG/JPG, Cache Control = Public)
-  - `Durgarao_Resume` — resume PDF (Cache Control = Public)
+- Static Resources uploaded (Cache Control = **Public**):
+  - `durgarao_image` — profile photo
+  - `Durgarao_Resume` — resume PDF
 
 #### Dependencies
-- No Apex controller required
+- No Apex required
 - Google Fonts: `Syne`, `DM Sans`
 
 #### Configurable Properties (Experience Builder)
 
-| Property | Type | Default | Description |
-|---|---|---|---|
-| `profileName` | String | Durgarao Telagareddi | Full name (typewriter animated) |
-| `profileTitle` | String | Senior Salesforce Developer | Subtitle below name |
-| `yearsExp` | Integer | 6 | Years shown in gold badge |
-| `location` | String | Hyderabad, India | Shown in meta line |
-| `email` | String | tmdurgarao@gmail.com | Clickable email link |
-| `profileSummary` | String | (long text) | Summary paragraph in glass card |
+| Property | Type | Default |
+|---|---|---|
+| `profileName` | String | Durgarao Telagareddi |
+| `profileTitle` | String | Senior Salesforce Developer |
+| `yearsExp` | Integer | 6 |
+| `location` | String | Hyderabad, India |
+| `email` | String | tmdurgarao@gmail.com |
+| `profileSummary` | String | (long text) |
 
 #### Manual Steps
-1. Upload `durgarao_image` as a Static Resource (Setup → Static Resources → New)
-2. Upload `Durgarao_Resume` as a Static Resource
-3. Deploy the component
-4. Drag onto the Home page in Experience Builder
-5. Fill in the property panel on the right
-
-#### What it does
-- Animated gradient background (blue → navy, infinite loop)
-- Floating circular profile image with glow pulse ring
-- Typewriter effect writes the name on load
-- Glassmorphism summary card with 4 stat counters (XP, Projects, Certs, Clients)
-- Gold "Download Resume" button + frosted "View Projects" button
+1. Upload both Static Resources (Cache Control: **Public**)
+2. Deploy the component
+3. Drag onto the Home page in Experience Builder and fill in properties
 
 ---
 
 ### 2. `portfolioProjects`
 
-**Purpose:** Showcases key projects as cards pulled from a Salesforce data source (Custom Metadata or Custom Object).
+**Purpose:** Showcases Salesforce projects as data-driven cards.
 
 #### Prerequisites
-- Project data stored in `Portfolio_Project__mdt` (Custom Metadata) or a Custom Object
+- Project data stored in Custom Metadata or Custom Object
 - Apex controller wired to the component
 
-#### Dependencies
-- Wire adapter to fetch project records
-- Google Fonts: `Syne`, `DM Sans`
-
 #### Manual Steps
-1. Create the data source (Custom Metadata or Object) with fields: Project Name, Client, Tech Stack, Description, Image URL
-2. Deploy the component
-3. Add to the Projects page in Experience Builder
+1. Create data source with fields: Name, Client, Tech Stack, Description, Image URL
+2. Deploy the component and add to the Projects page
 
 ---
 
 ### 3. `portfolioGames`
 
-**Purpose:** Landing page for the Games Lab section. Shows game cards linking to individual game components.
+**Purpose:** Landing page for the Games Lab. Shows game cards linking to individual game components.
 
 #### Prerequisites
-- All game components deployed first (`memoryMatch`, `soqlSnake`, `sfQuiz`, `trailheadTrivia`)
-
-#### Dependencies
-- None (purely presentational)
+- All 4 game components deployed first
 
 #### Manual Steps
-1. Deploy all game sub-components first
-2. Deploy `portfolioGames`
-3. Add to the Games page in Experience Builder
+1. Deploy `memoryMatch`, `soqlSnake`, `sfQuiz`, `trailheadTrivia`
+2. Deploy `portfolioGames` and add to the Games page
 
 ---
 
 ### 4. `portfolioSkillsCerts`
 
-**Purpose:** A two-tab component. **Skills tab** shows filterable skill cards with animated progress bars pulled from Custom Metadata. **Certifications tab** shows certification cards with official Salesforce logo images and a verify link.
+**Purpose:** Two-tab component. **Skills** tab shows filterable cards with animated progress bars from `Portfolio_Skill__mdt`. **Certifications** tab shows cert cards with official Salesforce logo images and verify links.
 
 #### Prerequisites
-- Two Custom Metadata Types must be created (see [Custom Metadata Setup](#-custom-metadata-setup)):
-  - `Portfolio_Skill__mdt`
-  - `Portfolio_Certification__mdt`
-- Apex controller deployed: `PortfolioSkillsController`
-- Guest User Profile must have Apex class access to `PortfolioSkillsController`
-- CSP Trusted Site added for `https://trailhead.salesforce.com` (cert logo images)
-
-#### Dependencies
-| Dependency | Why |
-|---|---|
-| `PortfolioSkillsController.cls` | Queries both Custom Metadata types |
-| `Portfolio_Skill__mdt` | Stores skill name, category, proficiency % |
-| `Portfolio_Certification__mdt` | Stores cert name, logo URL, credential ID |
-| Google Fonts: `Syne`, `DM Sans` | Typography |
+- Custom Metadata Types: `Portfolio_Skill__mdt` and `Portfolio_Certification__mdt`
+- Apex class `PortfolioSkillsController` deployed
+- Guest User has Apex class access
+- CSP Trusted Site for `https://trailhead.salesforce.com`
 
 #### Custom Metadata: `Portfolio_Skill__mdt`
-| Field API Name | Type | Example Value |
+| Field API Name | Type | Example |
 |---|---|---|
 | `Skill_Name__c` | Text(255) | Apex |
 | `Category__c` | Text(100) | Languages |
@@ -293,173 +289,131 @@ force-app/
 | `Sort_Order__c` | Number(3,0) | 1 |
 
 #### Custom Metadata: `Portfolio_Certification__mdt`
-| Field API Name | Type | Example Value |
+| Field API Name | Type | Example |
 |---|---|---|
 | `Cert_Name__c` | Text(255) | Salesforce Certified Administrator |
 | `Issuer__c` | Text(100) | Salesforce |
 | `Credential_ID__c` | Text(100) | 22893898 |
 | `Issue_Date__c` | Text(50) | Jan 2022 |
-| `Logo_URL__c` | URL | https://trailhead.salesforce.com/assets/... |
+| `Logo_URL__c` | URL | https://trailhead.salesforce.com/... |
 | `Badge_Color__c` | Text(10) | #00A1E0 |
 | `Cert_URL__c` | URL | https://trailhead.salesforce.com/credentials/... |
 | `Sort_Order__c` | Number(3,0) | 1 |
 
 #### Official Salesforce Cert Logo URLs
 ```
-Admin:        https://trailhead.salesforce.com/assets/certification-site/images/certifications/administrator.png
-Developer I:  https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_developer_i.png
-Data Cloud:   https://trailhead.salesforce.com/assets/certification-site/images/certifications/data_cloud_consultant.png
-App Builder:  https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_app_builder.png
-AI Associate: https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_associate.png
-AI Specialist:https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_specialist.png
+Admin:          https://trailhead.salesforce.com/assets/certification-site/images/certifications/administrator.png
+Developer I:    https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_developer_i.png
+Data Cloud:     https://trailhead.salesforce.com/assets/certification-site/images/certifications/data_cloud_consultant.png
+App Builder:    https://trailhead.salesforce.com/assets/certification-site/images/certifications/platform_app_builder.png
+AI Associate:   https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_associate.png
+AI Specialist:  https://trailhead.salesforce.com/assets/certification-site/images/certifications/ai_specialist.png
 ```
 
 #### Manual Steps
-1. Create both Custom Metadata Types in Setup
-2. Add all field API names exactly as listed above
-3. Insert your data records (Setup → Custom Metadata Types → Manage Records)
-4. Deploy `PortfolioSkillsController.cls`
-5. Grant Guest User Profile access to the Apex class
-6. Add `https://trailhead.salesforce.com` to CSP Trusted Sites
-7. Deploy the LWC component
-8. Add to the Home or Skills page in Experience Builder
-
-#### How Tabs Work
-- Clicking **Skills** sets `activeTab = 'skills'` — only the Skills panel renders via `lwc:if`
-- Clicking **Certifications** sets `activeTab = 'certs'` — only the Certs panel renders
-- The other panel is completely removed from the DOM (not just hidden)
+1. Create both Custom Metadata Types with all fields
+2. Add records via Manage Records
+3. Deploy `PortfolioSkillsController.cls`
+4. Grant Guest User Profile Apex Class access
+5. Add `https://trailhead.salesforce.com` to CSP Trusted Sites
+6. Deploy the LWC and add to the Home page
 
 ---
 
 ### 5. `memoryMatch`
 
-**Purpose:** A fully playable memory card matching game with a Salesforce cloud theme, 3D flip animations, move counter, timer, and win screen.
+**Purpose:** Playable 3D memory card matching game with a Salesforce cloud theme, move counter, timer, star rating, and confetti win screen.
 
 #### Prerequisites
-- No Apex, no Custom Metadata, no Static Resources required
-- Self-contained — all game data is hardcoded in JS
+- No Apex, no metadata required — fully self-contained
 
 #### Dependencies
 - Google Fonts: `Orbitron`, `Rajdhani`
-- No external libraries
-
-#### Configurable Options (in-game)
-| Option | Values | Default |
-|---|---|---|
-| Difficulty | Easy (4×3) / Hard (4×4) | Easy |
-
-#### Manual Steps
-1. Deploy the component (4 files: html, js, css, xml)
-2. Add to the Games page in Experience Builder — no further configuration needed
 
 #### How it works
-- 12 Salesforce-themed card pairs (Sales Cloud, Service Cloud, Apex, etc.)
-- CSS `rotateY(180deg)` + `preserve-3d` for true 3D flip effect
-- Timer starts on first card flip, stops on win
-- Star rating based on move efficiency
+- 12 Salesforce-themed card pairs (Sales Cloud, Service Cloud, Apex, LWC, etc.)
+- CSS `rotateY(180deg)` + `preserve-3d` for true 3D flip
+- Difficulty: Easy (4×3) or Hard (4×4)
 - Confetti burst on win screen
+
+#### Manual Steps
+1. Deploy (4 files) and add to the Games page
 
 ---
 
 ### 6. `soqlSnake`
 
-**Purpose:** A canvas-based snake game where the player eats SOQL keyword tokens in order to build a valid SOQL query. Speed increases per level.
+**Purpose:** Canvas-based snake game. Eat SOQL keyword tokens in order to build valid SOQL queries. Speed increases per level.
 
 #### Prerequisites
-- No Apex, no Custom Metadata required
-- Uses `lwc:ref` to access the `<canvas>` element — requires **LWC API 59.0+**
+- No Apex required; uses `lwc:ref` — requires **LWC API 59.0+**
 
 #### Dependencies
 - Google Fonts: `Orbitron`, `Share Tech Mono`
-- Browser Canvas 2D API (supported in all modern browsers)
-
-#### Manual Steps
-1. Deploy the component
-2. Add to the Games page in Experience Builder
-3. The canvas auto-sizes to 480×480px on desktop, 320×320px on mobile
+- Browser Canvas 2D API
 
 #### Controls
 | Input | Action |
 |---|---|
-| Arrow keys / WASD | Move snake |
+| Arrow keys / WASD | Move |
 | P or Escape | Pause / Resume |
-| D-Pad buttons | Mobile touch controls |
+| On-screen D-Pad | Mobile touch |
 
-#### SOQL Sequences (built-in)
-The snake eats tokens in sequence to complete real SOQL queries:
-```sql
-SELECT Id FROM Account
-SELECT Id,Name FROM Contact WHERE IsActive=true
-SELECT COUNT() FROM Opportunity WHERE StageName='Closed Won'
-SELECT Id,Name FROM Lead ORDER BY CreatedDate DESC LIMIT 10
-```
+#### Manual Steps
+1. Deploy and add to the Games page
 
 ---
 
 ### 7. `sfQuiz`
 
-**Purpose:** A timed multiple-choice quiz with 4 Salesforce categories, 3 difficulty levels, countdown timer ring, answer feedback, and a badge/results system.
+**Purpose:** Timed multiple-choice quiz. 4 Salesforce categories, 3 difficulty levels, SVG countdown timer ring, badge rewards.
 
 #### Prerequisites
-- No Apex, no Custom Metadata required
-- Self-contained — 32 questions hardcoded in JS
+- No Apex required — 32 questions hardcoded in JS
 
 #### Dependencies
 - Google Fonts: `Exo 2`, `DM Sans`
 
-#### Categories & Question Count
-| Category | Questions | Topics |
-|---|---|---|
-| 🛡️ Admin | 8 | Sharing, Flows, Reports, Profiles |
-| ⚡ Apex | 8 | Governor Limits, Async, SOQL, Annotations |
-| ⚙️ LWC | 8 | Decorators, Lifecycle, Directives, Events |
-| 🔗 Integration | 8 | REST, Bulk API, Auth Flows, Platform Events |
+#### Categories
+| Category | Questions |
+|---|---|
+| 🛡️ Admin | 8 |
+| ⚡ Apex | 8 |
+| ⚙️ LWC | 8 |
+| 🔗 Integration | 8 |
 
-#### Difficulty Settings
-| Level | Timer | Points per Question |
+#### Difficulty
+| Level | Timer | Points |
 |---|---|---|
 | Easy | 30s | 10 pts |
 | Medium | 20s | 20 pts |
 | Hard | 15s | 30 pts |
 
-> **Score bonus:** Faster answers earn extra points based on remaining time (`timeLeft × 0.5`)
-
-#### Earnable Badges
-| Badge | Condition |
-|---|---|
-| 🎯 Sharp Shooter | Perfect score |
-| 🔥 On Fire | Streak of 3+ correct |
-| ⚡ Lightning Fast | 80%+ score |
-| 🏆 Champion | Perfect score with 5+ questions |
-| 💎 Diamond Mind | 90%+ score |
-
 #### Manual Steps
-1. Deploy the component
-2. Add to the Games page in Experience Builder
+1. Deploy and add to the Games page
 
 ---
 
 ### 8. `trailheadTrivia`
 
-**Purpose:** A Trailhead-style trail-based trivia game with XP progression, badge collection, streak bonuses, hints, and 5 rank tiers.
+**Purpose:** Trailhead-style trail trivia game with XP progression, badge collection, streak bonuses, hints, and 5 rank tiers.
 
 #### Prerequisites
-- No Apex, no Custom Metadata required
-- Self-contained — 24 questions across 4 trails hardcoded in JS
+- No Apex required — 24 questions across 4 trails hardcoded in JS
 
 #### Dependencies
 - Google Fonts: `Nunito`, `Fira Code`
 
 #### Trails
-| Trail | Level | Questions | Badge |
-|---|---|---|---|
-| 🛡️ Admin Basics | Beginner | 6 | Admin Trailblazer |
-| ⚡ Apex Hero | Intermediate | 6 | Apex Champion |
-| 🤖 AI Pioneer | Advanced | 6 | AI Trailblazer |
-| 📊 Data Ranger | Intermediate | 6 | Data Ranger |
+| Trail | Level | Questions |
+|---|---|---|
+| 🛡️ Admin Basics | Beginner | 6 |
+| ⚡ Apex Hero | Intermediate | 6 |
+| 🤖 AI Pioneer | Advanced | 6 |
+| 📊 Data Ranger | Intermediate | 6 |
 
-#### XP & Rank System
-| Rank | XP Required |
+#### XP & Ranks
+| Rank | XP |
 |---|---|
 | Trailblazer Novice | 0–499 |
 | Explorer | 500–999 |
@@ -467,290 +421,372 @@ SELECT Id,Name FROM Lead ORDER BY CreatedDate DESC LIMIT 10
 | Trail Boss | 2,000–3,499 |
 | Legend | 3,500+ |
 
-**XP Earning Rules:**
-- Correct answer: **+50 XP**
-- Streak bonus: **+20 XP × (streak − 1)**
-- Hint used: **−5 XP**
-- Perfect trail: **+100 XP bonus**
-
 #### Manual Steps
-1. Deploy the component
-2. Add to the Games page in Experience Builder
-3. No further setup needed — XP and badges persist in the browser session
+1. Deploy and add to the Games page
 
 ---
 
 ### 9. `submitRequest`
 
-**Purpose:** A floating "Submit a Request" trigger button that opens a premium dark modal form. On submission, saves a record to `Portfolio_Request__c` and plays a full-screen circular rocket launch animation.
+**Purpose:** Floating "Submit a Request" button that opens a premium dark modal form. Saves to `Portfolio_Request__c` and plays a full-screen rocket launch animation on success.
 
 #### Prerequisites
-- Custom Object `Portfolio_Request__c` must be created (see below)
-- Apex class `SubmitRequestController` must be deployed
-- Guest User Profile must have:
-  - **Create** permission on `Portfolio_Request__c`
-  - **Apex Class Access** to `SubmitRequestController`
-
-#### Dependencies
-| Dependency | Purpose |
-|---|---|
-| `SubmitRequestController.cls` | Inserts the request record |
-| `Portfolio_Request__c` | Stores submitted requests |
-| Google Fonts: `Syne`, `DM Sans` | Typography |
+- Custom Object `Portfolio_Request__c` created
+- Apex class `SubmitRequestController` deployed
+- Guest User has Create on `Portfolio_Request__c` + Apex class access
 
 #### Custom Object: `Portfolio_Request__c`
-| Field Label | API Name | Type | Notes |
-|---|---|---|---|
-| Request Type | `Request_Type__c` | Picklist | Recruitment, Career Help, Referral, Other |
-| Email | `Email__c` | Email | |
-| Comment | `Comment__c` | Long Text Area (32768) | |
-| Status | `Status__c` | Picklist | New, In Review, Closed |
-| Submitted Date | `Submitted_Date__c` | Date | Auto-set to today() |
-
-#### Manual Steps
-1. Create the `Portfolio_Request__c` custom object with all fields above
-2. Deploy `SubmitRequestController.cls`
-3. Grant Guest User Profile Create access to `Portfolio_Request__c`
-4. Grant Guest User Profile Apex Class access to `SubmitRequestController`
-5. Deploy the LWC component (4 files)
-6. Add to any page in Experience Builder — the button is `display: inline-block` and works anywhere
+| Field Label | API Name | Type |
+|---|---|---|
+| Request Type | `Request_Type__c` | Picklist: Recruitment, Career Help, Referral, Other |
+| Email | `Email__c` | Email |
+| Comment | `Comment__c` | Long Text Area (32768) |
+| Status | `Status__c` | Picklist: New, In Review, Closed |
+| Submitted Date | `Submitted_Date__c` | Date |
 
 #### Rocket Animation Sequence
-When Send is clicked and the record saves successfully:
-1. Modal closes instantly
-2. Full-screen dark overlay appears with blur
-3. 12 confetti dots burst outward in random directions
-4. 3 expanding ring pulses radiate from centre
-5. A 🚀 emoji orbits the centre in a 400° arc with a glowing exhaust flame
-6. "Request Sent! 🎉" message pops in at centre
-7. Overlay fades out after ~3 seconds
+1. Modal closes → full-screen overlay fades in (94% opacity, 12px blur)
+2. 12 confetti dots burst outward with staggered delays
+3. 3 expanding ring pulses radiate from centre
+4. 🚀 emoji orbits 400° with a glowing exhaust trail
+5. "Request Sent! 🎉" message appears at centre
+6. Overlay fades out at ~2.4s, DOM removed at 3s
+
+#### Manual Steps
+1. Create `Portfolio_Request__c` with all fields
+2. Deploy `SubmitRequestController.cls`
+3. Grant Guest User permissions
+4. Deploy LWC and add to Contact page
 
 ---
 
 ### 10. `portfolioAgentWidget`
 
-**Purpose:** A custom floating action button (FAB) that wraps the Salesforce Messaging for Web (Agentforce) chat widget. Provides branded styling, a tooltip, unread message badge, and clean open/close toggle — replacing the default Salesforce chat bubble.
+**Purpose:** Custom floating AI chat button (FAB) wrapping Salesforce Messaging for Web (Agentforce). Provides branded styling, welcome tooltip, unread badge, and clean open/close toggle.
 
 #### Prerequisites
-- An **Agentforce agent** already created in Setup → Agent Studio
-- A **Messaging for Web Channel** created and linked to the agent (Setup → Messaging for Web)
-- The Messaging for Web **JS deployment snippet** added to Experience Builder Head Markup
-- All 5 **CSP Trusted Sites** for Salesforce chat domains added (see [CSP Trusted Sites](#-csp-trusted-sites))
-- **CORS** allowed origin set for your site URL
+- Agentforce agent created and active in Setup → Agent Studio
+- Messaging for Web Channel created and linked to the agent
+- JS deployment snippet added to Experience Builder Head Markup
+- All Salesforce chat CSP Trusted Sites added
 
-#### Dependencies
-| Dependency | Required? | Purpose |
-|---|---|---|
-| Messaging for Web Channel | ✅ Yes | Routes chat to Agentforce |
-| JS Snippet in Head Markup | ✅ Yes | Loads `embeddedservice_bootstrap` |
-| CSP Trusted Sites | ✅ Yes | Allows browser to load chat scripts |
-| Agentforce Agent (active) | ✅ Yes | Responds to visitor messages |
-
-#### Configurable Properties (Experience Builder)
+#### Configurable Properties
 | Property | Type | Default |
 |---|---|---|
 | `agentName` | String | Ask Durgarao's AI |
 | `welcomeHint` | String | Ask me about Durgarao's projects & skills! |
 | `showOnMobile` | Boolean | true |
 
-#### Manual Steps
-1. Create Messaging for Web Channel in Setup and link to your agent
-2. Copy the generated JS snippet
-3. Open Experience Builder → Settings (⚙) → Advanced → Edit Head Markup → paste snippet
-4. Add all 5 CSP Trusted Sites (see section below)
-5. Deploy `portfolioAgentWidget` component
-6. Add to **Theme Layout** in Experience Builder (so it appears on every page automatically)
-7. Publish the site
-
 #### How the FAB Works
-- On load: polls every 500ms until `embeddedservice_bootstrap` is available
-- At 3s: auto-shows a tooltip with the welcome hint
+- Polls every 500ms until `embeddedservice_bootstrap` is available in `window`
+- At 3s: auto-shows tooltip with welcome hint
 - Click: calls `embeddedservice_bootstrap.utilAPI.launchChat()` or `closeChat()`
-- Listens to `onEmbeddedMessagingWindowOpened/Closed` events to sync the icon state
-- Unread badge increments on `onEmbeddedMessagingNewMessageReceived` when chat is closed
-- The default Salesforce chat button is hidden via CSS
+- Listens to `onEmbeddedMessagingWindowOpened/Closed` events for state sync
+- Unread badge increments on `onEmbeddedMessagingNewMessageReceived` when minimised
+- Default Salesforce chat bubble is hidden via CSS injection
+
+#### Manual Steps
+1. Create Messaging for Web Channel and link to Agentforce agent
+2. Copy JS snippet → Experience Builder → Head Markup
+3. Add all 5 Salesforce chat CSP Trusted Sites
+4. Deploy component and add to **Theme Layout** (appears on every page)
+5. Publish the site
 
 ---
 
 ### 11. `portfolioAchievements`
 
-**Purpose:** A full-page "Hall of Fame" section that showcases Awards, Certifications and Community Goodies pulled from a single Custom Metadata type. Features a live filter tab system, spotlight cards for featured achievements, and dedicated mosaic grids for certs and goodies. All data is managed 100% in Salesforce — no code changes required to add or edit entries.
+**Purpose:** Full-page "Hall of Fame" showcasing Awards, Certifications, and Goodies driven by `Portfolio_Achievement__mdt`. Features live category filter tabs, featured spotlight cards, cert mosaic grid, and goodies grid. Zero code changes needed to add new entries.
 
 #### Aesthetic
-Luxury Trophy Cabinet — `Playfair Display` editorial serif + `Jost` clean sans on a deep midnight navy background with burnished gold accents, diagonal ray highlights, and a subtle grain texture overlay.
-
----
+Luxury Trophy Cabinet — `Playfair Display` + `Jost` on deep midnight navy, burnished gold accents, grain texture overlay.
 
 #### Prerequisites
-- Custom Metadata Type `Portfolio_Achievement__mdt` must be created (see field table below)
-- Apex class `PortfolioAchievementsController` must be deployed
-- Guest User Profile must have **Apex Class Access** to `PortfolioAchievementsController`
-- CSP Trusted Site for Google Fonts must be added (shared with other components)
-
-#### Dependencies
-| Dependency | Purpose |
-|---|---|
-| `PortfolioAchievementsController.cls` | Queries all active `Portfolio_Achievement__mdt` records |
-| `Portfolio_Achievement__mdt` | Single metadata type for Awards, Certs, and Goodies |
-| Google Fonts: `Playfair Display`, `Jost` | Luxury editorial typography |
-
----
+- Custom Metadata Type `Portfolio_Achievement__mdt` created
+- Apex class `PortfolioAchievementsController` deployed
+- Guest User has Apex class access
 
 #### Custom Metadata Type: `Portfolio_Achievement__mdt`
 
-> **One metadata type handles all three sections** — the `Category__c` picklist value determines which section each record appears in.
-
 | Field Label | API Name | Type | Required | Notes |
 |---|---|---|---|---|
-| Title | `Title__c` | Text(255) | ✅ | e.g. "Q2 SPOT Award" |
-| Issuer | `Issuer__c` | Text(255) | ✅ | e.g. "Verticurl", "Salesforce" |
+| Title | `Title__c` | Text(255) | ✅ | Display name |
+| Issuer | `Issuer__c` | Text(255) | ✅ | e.g. "Salesforce" |
 | Year | `Year__c` | Text(10) | ✅ | e.g. "2024" |
-| Description | `Description__c` | Long Text Area (32768) | — | Full detail shown on card |
+| Description | `Description__c` | Long Text(32768) | — | Card detail |
 | Category | `Category__c` | Picklist | ✅ | `Award` \| `Certificate` \| `Goodie` |
-| Icon Emoji | `Icon_Emoji__c` | Text(10) | — | e.g. `🏆`, `⭐`, `🚀`, `🎓`, `🎁` |
-| Badge Color | `Badge_Color__c` | Text(10) | — | Hex value e.g. `#FFD700` — drives card accent colour |
-| Is Featured | `Is_Featured__c` | Checkbox | — | `true` = renders as large spotlight card in Awards |
-| Is Active | `Is_Active__c` | Checkbox | ✅ | Set `false` to hide without deleting |
-| Detail URL | `Detail_URL__c` | URL | — | Optional "Verify ↗" link on the card |
-| Sort Order | `Sort_Order__c` | Number(3,0) | — | Controls display order (ascending) |
+| Icon Emoji | `Icon_Emoji__c` | Text(10) | — | e.g. `🏆`, `🎓`, `🎁` |
+| Badge Color | `Badge_Color__c` | Text(10) | — | Hex e.g. `#FFD700` |
+| Is Featured | `Is_Featured__c` | Checkbox | — | Large spotlight card in Awards |
+| Is Active | `Is_Active__c` | Checkbox | ✅ | `false` = hidden |
+| Detail URL | `Detail_URL__c` | URL | — | "Verify ↗" link |
+| Sort Order | `Sort_Order__c` | Number(3,0) | — | Display order |
 
----
-
-#### Pre-loaded Records (add via Manage Records)
-
-**Awards:**
-
-| Title | Issuer | Year | Category | Icon | Color | Featured |
-|---|---|---|---|---|---|---|
-| Winner of Salesforce Developer Program | Salesforce | 2021 | Award | 🏆 | `#FFD700` | ✅ |
-| Q2 SPOT Award | Verticurl | 2022 | Award | ⭐ | `#00A1E0` | ✅ |
-| Transformer of the Month Award | Verticurl | 2024 | Award | 🚀 | `#9B59B6` | ✅ |
-
-**Recommended Descriptions to paste into `Description__c`:**
-
-```
-Winner of Salesforce Developer Program (2021):
-Recognised as a top-performing developer in the annual Salesforce Developer Program for
-outstanding contributions to the Salesforce ecosystem through innovative solutions and
-best-practice implementations across Sales Cloud, Service Cloud, and Experience Cloud.
-
-Q2 SPOT Award (2022):
-Honored with the Q2 SPOT (Special Performance On Target) Award at Verticurl in recognition
-of exceptional client delivery, cross-team collaboration, and exceeding performance
-benchmarks during Q2 2022. Awarded for contributions to a critical global Salesforce
-implementation project.
-
-Transformer of the Month Award (2024):
-Awarded Transformer of the Month at Verticurl for driving a high-impact digital
-transformation initiative, demonstrating leadership and delivering measurable results for
-a global client within an aggressive timeline.
-```
-
-**Certificates (examples):**
-
-| Title | Issuer | Year | Category | Icon | Color |
+#### Pre-loaded Award Records
+| Title | Issuer | Year | Icon | Color | Featured |
 |---|---|---|---|---|---|
-| Salesforce Certified Administrator | Salesforce | 2022 | Certificate | 🛡️ | `#00A1E0` |
-| Salesforce Platform Developer I | Salesforce | 2022 | Certificate | ⚡ | `#0070D2` |
-| Salesforce Data Cloud Consultant | Salesforce | 2023 | Certificate | 📦 | `#032D60` |
-| Salesforce Certified AI Specialist | Salesforce | 2024 | Certificate | 🤖 | `#9B59B6` |
+| Winner of Salesforce Developer Program | Salesforce | 2021 | 🏆 | `#FFD700` | ✅ |
+| Q2 SPOT Award | Verticurl | 2022 | ⭐ | `#00A1E0` | ✅ |
+| Transformer of the Month Award | Verticurl | 2024 | 🚀 | `#9B59B6` | ✅ |
 
-**Goodies (examples):**
-
-| Title | Issuer | Year | Category | Icon | Color |
-|---|---|---|---|---|---|
-| Salesforce Trailblazer Hoodie | Salesforce | 2021 | Goodie | 👕 | `#27AE60` |
-| Salesforce Developer Swag Pack | Salesforce | 2022 | Goodie | 🎁 | `#E67E22` |
-
----
-
-#### How to Add a New Achievement in Future (No Code Required)
-1. Setup → Custom Metadata Types → **Portfolio Achievement** → Manage Records
-2. Click **New**
-3. Fill in: Title, Issuer, Year, Description, Category, Icon Emoji, Badge Color
-4. Set `Is_Active__c = true`
-5. Set `Is_Featured__c = true` if you want a large spotlight card in the Awards section
-6. Save — the component picks it up automatically on the next page load (cached wire)
-
-> To force cache refresh after adding records: bump the Apex method's `@AuraEnabled(cacheable=true)` by making a minor whitespace edit to the class and redeploying.
-
----
-
-#### Filter Tab Behaviour
-The four filter tabs — **All / Awards / Certifications / Goodies** — are dynamically generated from the data. The count badge on each tab reflects the live number of active records in that category. Clicking a tab re-renders only that category's panel (the others are fully removed from the DOM via `lwc:if`).
-
-#### Visual Hierarchy in Awards Section
-- **Featured awards** (`Is_Featured__c = true`) render as large premium spotlight cards with:
-  - Animated shimmer sweep on hover
-  - Stamped year seal (gold corner badge)
-  - Per-card accent colour from `Badge_Color__c`
-  - Glowing icon block
-  - 4-line clamped description
-- **Non-featured awards** render as compact horizontal list items with a coloured left border and year chip
+#### How to Add a New Achievement (Zero Code)
+1. Setup → Custom Metadata Types → Portfolio Achievement → Manage Records → **New**
+2. Fill in Title, Issuer, Year, Category, Icon, Color
+3. Set `Is_Active__c = true`, save — auto-appears on next page load
 
 #### Manual Steps
-1. Create `Portfolio_Achievement__mdt` in Setup with all fields listed above
-2. Add the `Category__c` picklist values: `Award`, `Certificate`, `Goodie`
+1. Create `Portfolio_Achievement__mdt` with all 11 fields
+2. Add `Category__c` picklist values: `Award`, `Certificate`, `Goodie`
 3. Insert records via Manage Records
 4. Deploy `PortfolioAchievementsController.cls`
-5. Grant Guest User Profile Apex Class access to `PortfolioAchievementsController`
-6. Deploy the LWC component (4 files)
-7. Create an **Achievements** page in Experience Builder
-8. Drag `portfolioAchievements` onto the page
-9. Publish the site
+5. Grant Guest User Apex class access
+6. Deploy LWC, create Achievements page, drag component, publish
+
+---
+
+### 12. `devToolsHub`
+
+**Purpose:** Parent container that hosts all three developer tools in a single polished interface. Renders a **Holographic Command Centre** with animated plasma orbs, glassmorphism navigation cards, and smooth tool-switching animations.
+
+#### Aesthetic
+Deep space navy with drifting plasma orbs (cyan, magenta, amber), `Syne` display font, `Manrope` body text. Each nav card has a per-tool animated gradient border.
+
+#### Prerequisites
+- **`soqlBuilder`, `apexLimitsChecker`, and `jsonToApex` must be deployed first**
+- No Apex, no Custom Metadata required
+
+#### Dependencies
+| Dependency | How Used |
+|---|---|
+| `soqlBuilder` LWC | Embedded as `<c-soql-builder>` |
+| `apexLimitsChecker` LWC | Embedded as `<c-apex-limits-checker>` |
+| `jsonToApex` LWC | Embedded as `<c-json-to-apex>` |
+| Google Fonts: `Syne`, `Manrope` | Typography |
+
+#### Navigation Behaviour
+- Three cards rendered from a static `TOOLS` array in `devToolsHub.js`
+- Add a 4th tool: add one object to `TOOLS` and deploy the child component
+- Only the active tool is in the DOM (`lwc:if` mounts/unmounts panels)
+- Entry animation: `translateY(14px) scale(0.99)` → normal on tool switch
+
+#### Manual Steps
+1. Deploy `soqlBuilder`, `apexLimitsChecker`, `jsonToApex`
+2. Deploy `devToolsHub`
+3. Create a **Developer Tools** page in Experience Builder
+4. Drag `devToolsHub` onto the page and publish
+
+---
+
+### 13. `soqlBuilder`
+
+**Purpose:** Interactive visual SOQL query constructor. Pick an object, toggle fields, add WHERE conditions, configure ORDER BY/LIMIT/OFFSET — live syntax-highlighted output with one-click copy.
+
+#### Aesthetic
+Hacker Terminal IDE — pitch black `#0D1117`, neon cyan `#00FFD4`, `Fira Code` monospace, macOS window chrome dots, scanline overlay.
+
+#### Prerequisites
+- No Apex, no Custom Metadata — fully self-contained
+
+#### Dependencies
+- Google Fonts: `Fira Code`, `IBM Plex Sans`
+- Browser Clipboard API
+
+#### Supported Objects (10)
+Account · Contact · Opportunity · Lead · Case · Task · User · Campaign · Product2 · Order
+
+#### WHERE Operators
+`=` · `!=` · `<` · `<=` · `>` · `>=` · `LIKE` · `IN` · `NOT IN`
+
+#### Quick Patterns
+| Pattern | Object | Pre-built Condition |
+|---|---|---|
+| 🕐 Last 7 Days | Account | `CreatedDate > LAST_N_DAYS:7` |
+| 💰 Open Opportunities | Opportunity | `IsClosed = false` |
+| 🎯 Active Leads | Lead | `IsConverted = false` |
+| 📋 Open Cases | Case | `IsClosed = false` |
+| ✅ My Tasks | Task | `Status != 'Completed'` |
+
+#### Manual Steps
+1. Deploy (4 files)
+2. Use standalone on any page, or nested inside `devToolsHub`
+
+---
+
+### 14. `apexLimitsChecker`
+
+**Purpose:** Real-time Governor Limits monitoring dashboard. Enter current usage per limit — get instant colour-coded health bars, CRITICAL alerts, system health strip, and a 15-row reference table.
+
+#### Aesthetic
+Mission Control Dashboard — amber `#FFB300` on midnight navy `#080C14`, dot-grid, `Rajdhani` display font, `Share Tech Mono` for numbers. Critical cards pulse with a red blink.
+
+#### Prerequisites
+- No Apex, no Custom Metadata — fully self-contained
+
+#### Dependencies
+- Google Fonts: `Rajdhani`, `Share Tech Mono`, `IBM Plex Sans`
+
+#### Tracked Limits
+
+| Limit | Sync | Async |
+|---|---|---|
+| SOQL Queries | 100 | 200 |
+| SOQL Rows Retrieved | 50,000 | 50,000 |
+| DML Statements | 150 | 150 |
+| DML Rows Processed | 10,000 | 10,000 |
+| CPU Time | 10,000 ms | 60,000 ms |
+| Heap Size | 6 MB | 12 MB |
+| Callouts | 100 | 100 |
+| Email Invocations | 10 | 10 |
+
+#### Colour Thresholds
+| Usage | Status | Colour |
+|---|---|---|
+| 0–79% | OK | 🟢 Green |
+| 80–89% | WARNING | 🟠 Amber |
+| 90–100% | CRITICAL | 🔴 Red — card blinks |
+
+#### Key Features
+- Sync / Async toggle — limits update instantly
+- System Health strip — aggregate safe-percentage across all limits
+- 80% threshold tick marker on every progress bar
+- Best-practice tip per card
+- 15-row collapsible reference table
+- Reset button
+
+#### Manual Steps
+1. Deploy (4 files)
+2. Use standalone or nested inside `devToolsHub`
+
+---
+
+### 15. `jsonToApex`
+
+**Purpose:** Cyberpunk split-editor that converts any valid JSON object to a production-ready Apex class — with inner classes, `List<T>` generics, `@JsonAccess` annotation, and `parse()` / `toJson()` methods.
+
+#### Aesthetic
+Cyberpunk Split Editor — deep violet/black `#0A0B14`, magenta `#FF2D78`, `JetBrains Mono` code font, `Outfit` UI font, animated gradient border cycling magenta→cyan→violet.
+
+#### Prerequisites
+- No Apex, no Custom Metadata — pure client-side
+
+#### Dependencies
+- Google Fonts: `JetBrains Mono`, `Outfit`
+- Browser Clipboard API
+
+#### Type Mapping
+| JSON Type | Apex Type |
+|---|---|
+| `"string"` | `String` |
+| `123` (whole) | `Integer` |
+| `1.5` (decimal) | `Decimal` |
+| `true` / `false` | `Boolean` |
+| `null` | `Object` |
+| `{ }` object | Inner class (PascalCase from key) |
+| `[{ }]` array of objects | `List<InnerClassItem>` + inner class |
+| `["a","b"]` string array | `List<String>` |
+| `[1,2]` number array | `List<Integer>` or `List<Decimal>` |
+
+#### Generated Apex Structure
+```apex
+@JsonAccess(serializable='always' deserializable='always')
+public with sharing class AccountWrapper {
+
+    public String id;
+    public Decimal annualRevenue;
+    public Boolean isActive;
+    public Address address;              // inner class
+    public List<ContactsItem> contacts;  // list + inner class
+    public List<String> tags;
+
+    public static AccountWrapper parse(String jsonStr) {
+        return (AccountWrapper) JSON.deserialize(jsonStr, AccountWrapper.class);
+    }
+
+    public String toJson() {
+        return JSON.serialize(this);
+    }
+
+    public class Address { ... }
+    public class ContactsItem { ... }
+}
+```
+
+#### Key Features
+- Live line numbers on both panes
+- Real-time JSON validation with inline error message
+- Configurable class name (auto-sanitised)
+- Toggles: `@JsonAccess` annotation, `with sharing` / `without sharing`
+- Load Sample — realistic multi-nested JSON (Account + Address + Contacts array)
+- Full Apex syntax highlighting
+- Copy with 2-second confirmation state
+- Type mapping legend
+
+#### Manual Steps
+1. Deploy (4 files)
+2. Use standalone or nested inside `devToolsHub`
 
 ---
 
 ## 🚀 Deployment Guide
 
-### Deploy All Components at Once
+### Deploy All at Once
 ```bash
-# Authenticate (first time only)
-sf org login web --alias portfolio-org
-
-# Set default org
-sf config set target-org portfolio-org
-
-# Deploy everything
 sf project deploy start --source-dir force-app/main/default
-
-# Check status
-sf project deploy report
 ```
 
 ### Deploy a Specific Component
 ```bash
-# Single LWC
-sf project deploy start --source-dir force-app/main/default/lwc/portfolioHero
+# LWC component
+sf project deploy start --source-dir force-app/main/default/lwc/soqlBuilder
 
-# Single Apex class
-sf project deploy start --source-dir force-app/main/default/classes/SubmitRequestController.cls
-
-# All LWCs only
-sf project deploy start --source-dir force-app/main/default/lwc
+# Apex class
+sf project deploy start --source-dir force-app/main/default/classes/PortfolioAchievementsController.cls
 ```
 
-### Retrieve Latest From Org
+### Retrieve From Org
 ```bash
 sf project retrieve start --metadata LightningComponentBundle ApexClass CustomObject CustomMetadata
 ```
 
 ### Recommended Deploy Order
-> Always deploy in this order to avoid dependency errors:
 
 ```
-1. Apex Classes          (PortfolioSkillsController, SubmitRequestController, PortfolioAchievementsController)
-2. Custom Objects         (Portfolio_Request__c)
-3. Custom Metadata Types  (Portfolio_Skill__mdt, Portfolio_Certification__mdt, Portfolio_Achievement__mdt)
-4. LWC Components         (all)
-5. Static Resources       (durgarao_image, Durgarao_Resume) — via UI
+Step 1 — Apex Classes
+   PortfolioSkillsController
+   SubmitRequestController
+   PortfolioAchievementsController
+
+Step 2 — Custom Objects
+   Portfolio_Request__c
+
+Step 3 — Custom Metadata Types
+   Portfolio_Skill__mdt
+   Portfolio_Certification__mdt
+   Portfolio_Achievement__mdt
+
+Step 4 — LWC Child Tools  ← must come BEFORE devToolsHub
+   soqlBuilder
+   apexLimitsChecker
+   jsonToApex
+
+Step 5 — All Other LWC Components
+   portfolioHero, portfolioProjects, portfolioGames, portfolioSkillsCerts
+   memoryMatch, soqlSnake, sfQuiz, trailheadTrivia
+   submitRequest, portfolioAgentWidget, portfolioAchievements
+
+Step 6 — LWC Hub  ← must come AFTER its child tools
+   devToolsHub
+
+Step 7 — Static Resources (upload via Salesforce UI)
+   durgarao_image
+   Durgarao_Resume
 ```
+
+> ⚠️ `devToolsHub` depends on `soqlBuilder`, `apexLimitsChecker`, and `jsonToApex`. Deploying the hub before its children will fail with a missing component reference error.
 
 ---
 
 ## 🖼 Static Resources Setup
-
-Two static resources must be uploaded manually via the Salesforce UI (they cannot be deployed via CLI easily due to binary file format).
 
 | Resource Name | File Type | Cache Control | Used By |
 |---|---|---|---|
@@ -759,69 +795,61 @@ Two static resources must be uploaded manually via the Salesforce UI (they canno
 
 **Steps:**
 1. Setup → Static Resources → **New**
-2. Name: `durgarao_image` (must match exactly — case-sensitive)
-3. Upload your photo file
-4. Cache Control: **Public** ← critical for guest user access
-5. Save
-6. Repeat for `Durgarao_Resume`
+2. Name exactly as above (case-sensitive)
+3. Upload file → Cache Control: **Public** → Save
 
-> ⚠️ If Cache Control is set to **Private**, guest/public users will get a 403 error and the image/PDF won't load.
+> ⚠️ Cache Control = **Private** will cause a 403 for all guest users.
 
 ---
 
 ## 🗃 Custom Metadata Setup
 
-Custom Metadata records are the "database" for Skills and Certifications. They are queryable by Apex and work with the Guest User without any sharing rules.
-
 ### Create `Portfolio_Skill__mdt`
-1. Setup → Custom Metadata Types → **New**
-2. Label: `Portfolio Skill` | Plural: `Portfolio Skills` | API Name: `Portfolio_Skill__mdt`
-3. Add all fields from the [portfolioSkillsCerts](#4-portfolioskillscerts) section
-4. Click **Manage Records** → add one record per skill
+1. Setup → Custom Metadata Types → New
+2. Label: `Portfolio Skill` · API Name: `Portfolio_Skill__mdt`
+3. Add all 7 fields from the [portfolioSkillsCerts](#4-portfolioskillscerts) table
+4. Manage Records → add one record per skill
 
 ### Create `Portfolio_Certification__mdt`
-1. Setup → Custom Metadata Types → **New**
-2. Label: `Portfolio Certification` | API Name: `Portfolio_Certification__mdt`
-3. Add all fields
-4. Click **Manage Records** → add one record per certification
+1. Setup → Custom Metadata Types → New
+2. Label: `Portfolio Certification` · API Name: `Portfolio_Certification__mdt`
+3. Add all 8 fields from the [portfolioSkillsCerts](#4-portfolioskillscerts) table
+4. Manage Records → add one record per certification
 
 ### Create `Portfolio_Achievement__mdt`
-1. Setup → Custom Metadata Types → **New**
-2. Label: `Portfolio Achievement` | Plural: `Portfolio Achievements` | API Name: `Portfolio_Achievement__mdt`
-3. Add all fields from the [portfolioAchievements](#11-portfolioachievements) field table
-4. Add `Category__c` Picklist with values: `Award`, `Certificate`, `Goodie`
-5. Click **Manage Records** → add your awards, certs, and goodies
-6. Set `Is_Active__c = true` on every record you want displayed
-7. Set `Is_Featured__c = true` on records you want as large spotlight cards
+1. Setup → Custom Metadata Types → New
+2. Label: `Portfolio Achievement` · API Name: `Portfolio_Achievement__mdt`
+3. Add all 11 fields from the [portfolioAchievements](#11-portfolioachievements) table
+4. Add `Category__c` picklist values: `Award`, `Certificate`, `Goodie` (exact capitalisation)
+5. Manage Records → add records, set `Is_Active__c = true` on each
 
-> 💡 Custom Metadata records can also be deployed via CLI by placing them in `force-app/main/default/customMetadata/` as XML files.
+> 💡 Metadata records can also be deployed via CLI using XML files in `force-app/main/default/customMetadata/`.
 
 ---
 
 ## 👤 Guest User & Public Access
 
-For any unauthenticated visitor to see data or submit forms, the Guest User Profile needs specific permissions.
-
 ### Find Your Guest Profile
-Setup → Digital Experiences → All Sites → **[Your Site]** → Workspaces → Administration → Guest User Profile (click the profile name)
+Setup → Digital Experiences → All Sites → **[Your Site]** → Workspaces → Administration → Guest User Profile
 
 ### Required Permissions
 
-| Permission | Where | Required For |
+| Permission | Location | Required For |
 |---|---|---|
 | Read on `Portfolio_Skill__mdt` | Object Settings | Skills tab |
 | Read on `Portfolio_Certification__mdt` | Object Settings | Certs tab |
-| Create on `Portfolio_Request__c` | Object Settings | Submit Request form |
-| Apex: `PortfolioSkillsController` | Apex Class Access | Skills & Certs data |
-| Apex: `SubmitRequestController` | Apex Class Access | Request form submit |
+| Read on `Portfolio_Achievement__mdt` | Object Settings | Achievements |
+| Create on `Portfolio_Request__c` | Object Settings | Submit form |
+| Apex: `PortfolioSkillsController` | Apex Class Access | Skills/Certs data |
+| Apex: `SubmitRequestController` | Apex Class Access | Form submission |
 | Apex: `PortfolioAchievementsController` | Apex Class Access | Achievements data |
-| Messaging for Web permission | Connected Apps | Agentforce chat |
+| Messaging for Web | Connected Apps | Agentforce chat |
 
 ---
 
 ## 🔒 CSP Trusted Sites
 
-Add these in Setup → Security → **CSP Trusted Sites** → New. Check **all Allow checkboxes** for each.
+Setup → Security → CSP Trusted Sites → New. Check **all Allow** checkboxes for each.
 
 | Site Name | URL | Required For |
 |---|---|---|
@@ -830,56 +858,70 @@ Add these in Setup → Security → **CSP Trusted Sites** → New. Check **all A
 | `Trailhead_CDN` | `https://trailhead.salesforce.com` | Cert logo images |
 | `SF_Embedded_Chat` | `https://[yourorg].my.salesforce.com` | Agentforce chat |
 | `SF_SCRT2` | `https://[yourorg].my.salesforce-scrt.com` | Chat transport |
-| `SF_LiveAgent` | `https://[yourorg].salesforce-live-agent.com` | Live agent fallback |
+| `SF_LiveAgent` | `https://[yourorg].salesforce-live-agent.com` | Live agent |
 | `SF_CDN_Static` | `https://static.salesforceliveagent.com` | Chat UI assets |
 
-> Replace `[yourorg]` with your actual Salesforce org subdomain.
+> Replace `[yourorg]` with your org subdomain (visible in Setup → My Domain).
 
 ---
 
 ## 🐛 Troubleshooting
 
 ### Component not showing in Experience Builder
-- Confirm `<target>lightningCommunity__Default</target>` is in the `.js-meta.xml`
-- Redeploy the component and hard-refresh Experience Builder
+- Confirm `.js-meta.xml` has `<target>lightningCommunity__Default</target>`
+- Redeploy and hard-refresh Experience Builder (Ctrl+Shift+R)
 
 ### Profile image not loading for guest users
 - Check Static Resource Cache Control = **Public**
-- Verify `@salesforce/resourceUrl/durgarao_image` spelling matches the Static Resource name exactly
+- Verify `@salesforce/resourceUrl/durgarao_image` matches the resource name exactly
 
-### Skills/Certs showing empty
-- Check the Guest User Profile has Apex Class access to `PortfolioSkillsController`
-- Check Custom Metadata records exist (Setup → Custom Metadata Types → Manage Records)
-- Open browser DevTools → Network tab → look for a 401 or 403 error on the Apex call
+### Skills / Certs showing empty
+- Confirm Guest User Profile has Apex Class access to `PortfolioSkillsController`
+- Confirm Custom Metadata records exist and are active
+- DevTools → Network → look for 401/403 on the Apex wire call
+
+### Achievements section showing empty
+- Check `Is_Active__c = true` on records
+- Verify `Category__c` values are exactly `Award`, `Certificate`, `Goodie` (case-sensitive)
+- Confirm Guest User has Apex Class access to `PortfolioAchievementsController`
+
+### Achievements in wrong section
+- Check `Category__c` value on the record — no trailing spaces, exact capitalisation
+- Valid: `Award`, `Certificate`, `Goodie` (not `award`, `AWARD`, etc.)
+
+### Dev Tools Hub — child panel blank
+- Deploy `soqlBuilder`, `apexLimitsChecker`, `jsonToApex` **before** `devToolsHub`
+- Browser Console → look for `Unknown custom element` errors
+
+### SOQL Builder — no query output
+- Select both an **object** AND at least **one field** — both required
+- ORDER BY dropdown only shows fields already selected in SELECT
+
+### JSON → Apex — no output
+- Input must be a valid JSON **object** `{ }` — root-level arrays not supported
+- Check the red error message under the input pane
+- JSON must use double-quoted keys
+
+### JSON → Apex — inner class missing
+- Inner classes only generate for **object values** `{ }` and **arrays of objects** `[{ }]`
+- Arrays of primitives correctly produce `List<String>` etc. — no inner class needed
 
 ### LWC deploy error: `if:true is not supported`
-- Your component is using the old `if:true={condition}` directive
-- Replace with `lwc:if={condition}`, `lwc:elseif={condition}`, `lwc:else`
-- Set API version to 59.0 in the `.js-meta.xml`
+- Replace `if:true={x}` with `lwc:if={x}`
+- Set `<apiVersion>59.0</apiVersion>` in `.js-meta.xml`
 
-### Agentforce chat button not appearing
-- Check the JS snippet is in Experience Builder → Head Markup
-- Check all CSP Trusted Sites are added
-- Open browser Console → look for `initEmbeddedMessaging` errors
+### Agentforce chat not appearing
+- Confirm JS snippet is in Experience Builder → Head Markup
+- Confirm all CSP Trusted Sites are added
+- Browser Console → look for `initEmbeddedMessaging` errors
 
-### Submit Request form saves but shows error
-- Check `Portfolio_Request__c` object exists with all required fields
-- Check Guest User Profile has **Create** permission on the object
-- Check Apex class is whitelisted in Guest Profile
+### Submit Request shows error after saving
+- Confirm `Portfolio_Request__c` exists with all required fields
+- Confirm Guest User has Create permission and `SubmitRequestController` Apex access
 
-### Achievements section shows empty or no cards
-- Check `Portfolio_Achievement__mdt` records have `Is_Active__c = true`
-- Verify `Category__c` picklist values are exactly `Award`, `Certificate`, `Goodie` (case-sensitive)
-- Confirm Guest User Profile has Apex Class access to `PortfolioAchievementsController`
-- Open browser DevTools → Network → filter by `PortfolioAchievementsController` to check for 401/403
-
-### Achievements showing wrong section (Award appearing in Goodies etc.)
-- Check the `Category__c` picklist value on the record matches exactly (no trailing spaces)
-- Picklist values are case-sensitive: `Award` not `award` or `AWARD`
-
-### Deploy fails with `Entity of type Metadata is not available`
-- The target org may not have Experience Cloud enabled
-- Or the API version in `sfdx-project.json` is mismatched — set `"sourceApiVersion": "59.0"`
+### Deploy fails: `Entity of type Metadata is not available`
+- Experience Cloud may not be enabled in the target org
+- Set `"sourceApiVersion": "59.0"` in `sfdx-project.json`
 
 ---
 

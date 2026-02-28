@@ -1,0 +1,116 @@
+<template>
+    <section class="hub-root">
+
+        <!-- ── Holographic background layers ── -->
+        <div class="hub-bg" aria-hidden="true">
+            <div class="hbg-grid"></div>
+            <div class="hbg-orb hbg-orb-1"></div>
+            <div class="hbg-orb hbg-orb-2"></div>
+            <div class="hbg-orb hbg-orb-3"></div>
+            <div class="hbg-scanline"></div>
+        </div>
+
+        <!-- ── Hero header ── -->
+        <header class="hub-hero">
+            <div class="hero-eyebrow">
+                <span class="eyebrow-pip" aria-hidden="true"></span>
+                <span class="eyebrow-text">Salesforce Developer Toolkit</span>
+                <span class="eyebrow-version">v1.0</span>
+            </div>
+            <h1 class="hero-title">Developer <span class="hero-title-accent">Tools</span></h1>
+            <p class="hero-desc">
+                Three precision-built utilities for daily Salesforce development —
+                SOQL query construction, Governor Limits monitoring, and Apex class generation.
+            </p>
+            <div class="hero-stats">
+                <template for:each={heroStats} for:item="s">
+                    <div key={s.id} class="hstat">
+                        <span class="hstat-icon">{s.icon}</span>
+                        <div class="hstat-text">
+                            <span class="hstat-val">{s.val}</span>
+                            <span class="hstat-lbl">{s.lbl}</span>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </header>
+
+        <!-- ── Tool selector navigation ── -->
+        <nav class="hub-nav" role="tablist" aria-label="Developer tools">
+            <template for:each={navTabs} for:item="tab">
+                <button
+                    key={tab.id}
+                    class={tab.btnClass}
+                    onclick={selectTool}
+                    data-tool={tab.id}
+                    role="tab"
+                    aria-selected={tab.isActive}
+                    aria-controls={tab.panelId}
+                >
+                    <!-- Animated gradient border on active -->
+                    <span class="nav-glow-border" aria-hidden="true"></span>
+
+                    <div class="nav-tab-inner">
+                        <div class="nav-icon-wrap" style={tab.iconBg}>
+                            <span class="nav-icon">{tab.icon}</span>
+                        </div>
+                        <div class="nav-text">
+                            <span class="nav-name">{tab.name}</span>
+                            <span class="nav-desc">{tab.desc}</span>
+                        </div>
+                        <div class="nav-arrow" aria-hidden="true">›</div>
+                    </div>
+
+                    <!-- Feature chips -->
+                    <div class="nav-chips">
+                        <template for:each={tab.chips} for:item="chip">
+                            <span key={chip} class="nav-chip">{chip}</span>
+                        </template>
+                    </div>
+                </button>
+            </template>
+        </nav>
+
+        <!-- ── Tool panels ── -->
+        <div class="hub-panels">
+
+            <!-- Panel: SOQL Builder -->
+            <template lwc:if={showSoql}>
+                <div class="hub-panel" id="panel-soql" role="tabpanel" aria-labelledby="tab-soql">
+                    <div class="panel-enter">
+                        <c-soql-builder></c-soql-builder>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Panel: Apex Limits Checker -->
+            <template lwc:if={showLimits}>
+                <div class="hub-panel" id="panel-limits" role="tabpanel" aria-labelledby="tab-limits">
+                    <div class="panel-enter">
+                        <c-apex-limits-checker></c-apex-limits-checker>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Panel: JSON to Apex -->
+            <template lwc:if={showJsonToApex}>
+                <div class="hub-panel" id="panel-json" role="tabpanel" aria-labelledby="tab-json">
+                    <div class="panel-enter">
+                        <c-json-to-apex></c-json-to-apex>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+
+        <!-- ── Footer strip ── -->
+        <footer class="hub-footer">
+            <span class="footer-logo">⚡ DevTools</span>
+            <span class="footer-sep" aria-hidden="true">·</span>
+            <span class="footer-text">Built with LWC for Salesforce Experience Cloud</span>
+            <span class="footer-sep" aria-hidden="true">·</span>
+            <span class="footer-text">API v59.0</span>
+        </footer>
+
+    </section>
+</template>

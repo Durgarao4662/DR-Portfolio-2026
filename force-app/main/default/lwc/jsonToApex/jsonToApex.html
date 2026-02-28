@@ -1,0 +1,135 @@
+<template>
+    <div class="jta-root">
+
+        <!-- Animated gradient border -->
+        <div class="jta-glow-border" aria-hidden="true"></div>
+
+        <!-- Header toolbar -->
+        <div class="jta-toolbar">
+            <div class="toolbar-left">
+                <span class="tool-icon">&lbrace; &rbrace;</span>
+                <div class="tool-title-wrap">
+                    <span class="tool-title">JSON → Apex Generator</span>
+                    <span class="tool-sub">Paste JSON, get instant Apex class</span>
+                </div>
+            </div>
+            <div class="toolbar-right">
+                <label class="toolbar-field-wrap">
+                    <span class="tf-label">Class Name</span>
+                    <input
+                        type="text"
+                        class="class-name-input"
+                        value={className}
+                        oninput={onClassNameChange}
+                        placeholder="MyApexClass"
+                        maxlength="50"
+                    />
+                </label>
+                <label class="toggle-wrap">
+                    <input type="checkbox" checked={useSerializable} onchange={onSerializableToggle}/>
+                    <span class="toggle-label">Serializable</span>
+                </label>
+                <label class="toggle-wrap">
+                    <input type="checkbox" checked={useSharingPublic} onchange={onSharingToggle}/>
+                    <span class="toggle-label">with sharing</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Split editor panes -->
+        <div class="jta-panes">
+
+            <!-- LEFT: JSON input -->
+            <div class="pane pane--input">
+                <div class="pane-header">
+                    <span class="pane-lang pane-lang--json">JSON</span>
+                    <span class="pane-filename">input.json</span>
+                    <div class="pane-actions">
+                        <button class="pane-btn" onclick={loadSample} aria-label="Load sample JSON">Sample</button>
+                        <button class="pane-btn pane-btn--danger" onclick={clearInput} aria-label="Clear input">Clear</button>
+                    </div>
+                </div>
+                <div class="pane-body">
+                    <div class="line-numbers" aria-hidden="true">
+                        <template for:each={lineNumbers} for:item="ln">
+                            <span key={ln} class="ln">{ln}</span>
+                        </template>
+                    </div>
+                    <textarea
+                        class="code-editor code-editor--json"
+                        placeholder={jsonPlaceholder}
+                        value={jsonInput}
+                        oninput={onJsonInput}
+                        spellcheck="false"
+                        aria-label="JSON input"
+                        rows="20"
+                    ></textarea>
+                </div>
+                <div class="pane-footer">
+                    <template lwc:if={jsonError}>
+                        <span class="pane-error">⚠ {jsonError}</span>
+                    </template>
+                    <template lwc:else>
+                        <span class="pane-stat">{jsonLineCount} lines · {jsonCharCount} chars</span>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="pane-divider" aria-hidden="true">
+                <div class="divider-line"></div>
+                <div class="divider-arrow">→</div>
+                <div class="divider-line"></div>
+            </div>
+
+            <!-- RIGHT: Apex output -->
+            <div class="pane pane--output">
+                <div class="pane-header">
+                    <span class="pane-lang pane-lang--apex">Apex</span>
+                    <span class="pane-filename">{className}.cls</span>
+                    <div class="pane-actions">
+                        <button class="pane-btn pane-btn--primary" onclick={copyApex} aria-label="Copy Apex">
+                            <template lwc:if={copied}>✓ Copied!</template>
+                            <template lwc:else>⎘ Copy</template>
+                        </button>
+                    </div>
+                </div>
+                <div class="pane-body">
+                    <div class="line-numbers" aria-hidden="true">
+                        <template for:each={apexLineNumbers} for:item="ln">
+                            <span key={ln} class="ln">{ln}</span>
+                        </template>
+                    </div>
+                    <div class="code-editor code-editor--apex" aria-live="polite">
+                        <template lwc:if={hasApex}>
+                            <pre class="apex-pre"><template for:each={apexTokens} for:item="tok"><span key={tok.id} class={tok.cls}>{tok.text}</span></template></pre>
+                        </template>
+                        <template lwc:else>
+                            <div class="apex-empty">
+                                <span class="apex-empty-icon">⚡</span>
+                                <p>Your Apex class will<br/>appear here</p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+                <div class="pane-footer">
+                    <template lwc:if={hasApex}>
+                        <span class="pane-stat">{apexLineCount} lines · {fieldCount} fields</span>
+                    </template>
+                </div>
+            </div>
+        </div>
+
+        <!-- Type reference legend -->
+        <div class="type-legend">
+            <span class="legend-label">Type mapping:</span>
+            <span class="legend-chip legend-chip--str">String → String</span>
+            <span class="legend-chip legend-chip--num">Number → Decimal / Integer</span>
+            <span class="legend-chip legend-chip--bool">Boolean → Boolean</span>
+            <span class="legend-chip legend-chip--null">null → Object</span>
+            <span class="legend-chip legend-chip--obj">Object → Inner Class</span>
+            <span class="legend-chip legend-chip--arr">Array → List&lt;T&gt;</span>
+        </div>
+
+    </div>
+</template>

@@ -1,0 +1,168 @@
+<!-- soqlBuilder.html -->
+<template>
+    <div class="sqb-root">
+        <div class="sqb-scanlines" aria-hidden="true"></div>
+        <div class="sqb-topglow" aria-hidden="true"></div>
+
+        <!-- Window chrome bar -->
+        <div class="sqb-chrome">
+            <div class="chrome-dots" aria-hidden="true">
+                <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+            </div>
+            <span class="chrome-title">soql_builder — Developer Tools</span>
+            <span class="chrome-badge">SOQL</span>
+        </div>
+
+        <div class="sqb-grid">
+
+            <!-- LEFT: Controls -->
+            <aside class="sqb-left">
+
+                <div class="ctrl-block">
+                    <span class="kw-label kw-from">FROM</span>
+                    <div class="sel-shell">
+                        <select class="c-select" onchange={onObjectChange} value={selectedObject}>
+                            <option value="">— choose object —</option>
+                            <template for:each={objectOptions} for:item="o">
+                                <option key={o.v} value={o.v}>{o.l}</option>
+                            </template>
+                        </select>
+                        <span class="sel-caret">▾</span>
+                    </div>
+                </div>
+
+                <div class="ctrl-block">
+                    <span class="kw-label kw-select">SELECT <span class="kw-comment">// fields</span></span>
+                    <template lwc:if={hasObject}>
+                        <div class="field-grid">
+                            <template for:each={availableFields} for:item="f">
+                                <label key={f.api} class={f.chipClass}>
+                                    <input type="checkbox" checked={f.selected}
+                                           onchange={onFieldToggle} data-field={f.api}/>
+                                    <span class="chip-name">{f.api}</span>
+                                    <span class="chip-type">{f.type}</span>
+                                </label>
+                            </template>
+                        </div>
+                    </template>
+                    <template lwc:else>
+                        <p class="empty-hint">← Select an object first</p>
+                    </template>
+                </div>
+
+                <div class="ctrl-block">
+                    <div class="kw-row">
+                        <span class="kw-label kw-where">WHERE</span>
+                        <button class="add-btn" onclick={addClause}>+ Add</button>
+                    </div>
+                    <template for:each={whereClauses} for:item="c">
+                        <div key={c.id} class="clause-row">
+                            <div class="sel-shell sel-shell--sm">
+                                <select class="c-select c-select--sm" onchange={onClauseField} data-id={c.id}>
+                                    <option value="">field</option>
+                                    <template for:each={availableFields} for:item="f">
+                                        <option key={f.api} value={f.api}>{f.api}</option>
+                                    </template>
+                                </select>
+                                <span class="sel-caret">▾</span>
+                            </div>
+                            <div class="sel-shell sel-shell--xs">
+                                <select class="c-select c-select--sm" onchange={onClauseOp} data-id={c.id}>
+                                    <template for:each={operators} for:item="op">
+                                        <option key={op.v} value={op.v}>{op.l}</option>
+                                    </template>
+                                </select>
+                                <span class="sel-caret">▾</span>
+                            </div>
+                            <input class="clause-val" type="text" placeholder="'value'"
+                                   value={c.value} oninput={onClauseValue} data-id={c.id}/>
+                            <button class="del-btn" onclick={removeClause} data-id={c.id}>✕</button>
+                        </div>
+                    </template>
+                    <template lwc:if={hasMultiClauses}>
+                        <div class="logic-row">
+                            <span class="logic-lbl">Logic:</span>
+                            <button class={andClass} onclick={setAnd}>AND</button>
+                            <button class={orClass}  onclick={setOr}>OR</button>
+                        </div>
+                    </template>
+                </div>
+
+                <div class="ctrl-block ctrl-block--row">
+                    <div class="half">
+                        <span class="kw-label kw-order">ORDER BY</span>
+                        <div class="sel-shell">
+                            <select class="c-select c-select--sm" onchange={onOrderField} value={orderByField}>
+                                <option value="">— none —</option>
+                                <template for:each={selectedFieldsList} for:item="f">
+                                    <option key={f} value={f}>{f}</option>
+                                </template>
+                            </select>
+                            <span class="sel-caret">▾</span>
+                        </div>
+                        <div class="dir-row">
+                            <button class={ascClass}  onclick={setAsc}>ASC</button>
+                            <button class={descClass} onclick={setDesc}>DESC</button>
+                        </div>
+                    </div>
+                    <div class="half">
+                        <span class="kw-label kw-limit">LIMIT</span>
+                        <input class="c-input" type="number" min="1" max="50000"
+                               placeholder="200" value={limitVal} oninput={onLimitChange}/>
+                        <span class="kw-label kw-limit" style="margin-top:0.6rem">OFFSET</span>
+                        <input class="c-input" type="number" min="0"
+                               placeholder="0" value={offsetVal} oninput={onOffsetChange}/>
+                    </div>
+                </div>
+
+            </aside>
+
+            <!-- RIGHT: Output -->
+            <div class="sqb-right">
+
+                <div class="out-toolbar">
+                    <div class="out-indicator">
+                        <span class="out-dot" aria-hidden="true"></span>
+                        <span class="out-title">Generated Query</span>
+                    </div>
+                    <div class="out-actions">
+                        <button class="act-btn act-btn--copy" onclick={copyQuery}>
+                            <template lwc:if={copied}>✓ Copied!</template>
+                            <template lwc:else>⎘ Copy</template>
+                        </button>
+                        <button class="act-btn act-btn--reset" onclick={clearAll}>✕ Reset</button>
+                    </div>
+                </div>
+
+                <div class="out-code-area">
+                    <template lwc:if={hasQuery}>
+                        <pre class="out-code" aria-live="polite"><template for:each={queryTokens} for:item="tok"><span key={tok.id} class={tok.cls}>{tok.text}</span></template></pre>
+                    </template>
+                    <template lwc:else>
+                        <div class="out-empty">
+                            <span class="cursor-blink" aria-hidden="true">█</span>
+                            <p>Configure your query<br/>using the controls on the left</p>
+                        </div>
+                    </template>
+                </div>
+
+                <template lwc:if={hasQuery}>
+                    <div class="out-stats">
+                        <div class="stat-pill"><span class="sp-k">fields</span><span class="sp-v">{selectedCount}</span></div>
+                        <div class="stat-pill"><span class="sp-k">conditions</span><span class="sp-v">{whereCount}</span></div>
+                        <div class="stat-pill"><span class="sp-k">chars</span><span class="sp-v">{queryLength}</span></div>
+                    </div>
+                </template>
+
+                <div class="patterns-zone">
+                    <p class="patterns-hdr">// quick patterns</p>
+                    <div class="patterns-pills">
+                        <template for:each={quickPatterns} for:item="p">
+                            <button key={p.id} class="p-pill" onclick={applyPattern} data-id={p.id}>{p.label}</button>
+                        </template>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
