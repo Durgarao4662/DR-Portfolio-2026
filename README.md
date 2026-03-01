@@ -6,7 +6,7 @@
 [![LWC](https://img.shields.io/badge/LWC-API%2059.0-0070D2?logo=salesforce&logoColor=white)](https://developer.salesforce.com/docs/component-library)
 [![Apex](https://img.shields.io/badge/Apex-Salesforce-032D60)](https://developer.salesforce.com/docs/atlas.en-us.apexcode.meta/apexcode/)
 [![Agentforce](https://img.shields.io/badge/Agentforce-AI%20Agent-9B59B6)](https://www.salesforce.com/agentforce/)
-[![Components](https://img.shields.io/badge/Components-15%20LWC-FFD700)](https://developer.salesforce.com/docs/component-library)
+[![Components](https://img.shields.io/badge/Components-16%20LWC-FFD700)](https://developer.salesforce.com/docs/component-library)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
 ---
@@ -34,6 +34,7 @@
   - [13. soqlBuilder](#13-soqlbuilder)
   - [14. apexLimitsChecker](#14-apexlimitschecker)
   - [15. jsonToApex](#15-jsontoapex)
+  - [16. learningHub](#16-learninghub)
 - [Deployment Guide](#-deployment-guide)
 - [Static Resources Setup](#-static-resources-setup)
 - [Custom Metadata Setup](#-custom-metadata-setup)
@@ -48,7 +49,7 @@
 
 This portfolio is built entirely on the **Salesforce platform** — no external hosting, no WordPress, no third-party CMS. Every page, game, form, animation, and developer tool is a native Salesforce Lightning Web Component deployed to an Experience Cloud public site.
 
-**15 LWC components · 3 Apex controllers · 3 Custom Metadata types · 1 Custom Object · 0 external servers**
+**16 LWC components · 4 Apex controllers · 4 Custom Metadata types · 1 Custom Object · 0 external servers**
 
 | Feature | Component | Type |
 |---|---|---|
@@ -67,6 +68,7 @@ This portfolio is built entirely on the **Salesforce platform** — no external 
 | SOQL Query Builder | `soqlBuilder` | LWC (child tool) |
 | Governor Limits Checker | `apexLimitsChecker` | LWC (child tool) |
 | JSON → Apex Generator | `jsonToApex` | LWC (child tool) |
+| Learning Materials Hub | `learningHub` | LWC + Apex + Custom Metadata |
 
 ---
 
@@ -81,6 +83,7 @@ Experience Cloud (Public Site)
 │   ├── Games          → portfolioGames → memoryMatch, soqlSnake, sfQuiz, trailheadTrivia
 │   ├── Achievements   → portfolioAchievements
 │   ├── Dev Tools      → devToolsHub → soqlBuilder, apexLimitsChecker, jsonToApex
+│   ├── Learning Hub   → learningHub
 │   └── Contact        → submitRequest
 │
 ├── Global (Theme Layout — appears on all pages)
@@ -89,12 +92,14 @@ Experience Cloud (Public Site)
 ├── Apex Controllers
 │   ├── PortfolioSkillsController        ← queries Portfolio_Skill__mdt + Portfolio_Certification__mdt
 │   ├── SubmitRequestController          ← inserts Portfolio_Request__c records
-│   └── PortfolioAchievementsController  ← queries Portfolio_Achievement__mdt
+│   ├── PortfolioAchievementsController  ← queries Portfolio_Achievement__mdt
+│   └── LearningHubController            ← queries Learning_Material__mdt
 │
 ├── Custom Metadata Types
 │   ├── Portfolio_Skill__mdt
 │   ├── Portfolio_Certification__mdt
-│   └── Portfolio_Achievement__mdt
+│   ├── Portfolio_Achievement__mdt
+│   └── Learning_Material__mdt           ← stores all learning resources
 │
 ├── Custom Object
 │   └── Portfolio_Request__c
@@ -149,6 +154,7 @@ sf config set target-org portfolio-org
 | soqlBuilder | `Fira Code`, `IBM Plex Sans` |
 | apexLimitsChecker | `Rajdhani`, `Share Tech Mono`, `IBM Plex Sans` |
 | jsonToApex | `JetBrains Mono`, `Outfit` |
+| learningHub | `Cormorant Garamond`, `Plus Jakarta Sans`, `Space Mono` |
 | devToolsHub | `Syne`, `Manrope` |
 
 > All fonts load via `@import` in each component's CSS. Add `https://fonts.googleapis.com` and `https://fonts.gstatic.com` to CSP Trusted Sites.
@@ -180,7 +186,8 @@ force-app/
         │   ├── soqlBuilder/            ← deploy BEFORE devToolsHub
         │   ├── apexLimitsChecker/      ← deploy BEFORE devToolsHub
         │   ├── jsonToApex/             ← deploy BEFORE devToolsHub
-        │   └── devToolsHub/            ← deploy LAST (depends on above 3)
+        │   ├── devToolsHub/            ← deploy LAST among dev tools
+        │   └── learningHub/
         │
         ├── classes/
         │   ├── PortfolioSkillsController.cls
@@ -188,12 +195,15 @@ force-app/
         │   ├── SubmitRequestController.cls
         │   ├── SubmitRequestController.cls-meta.xml
         │   ├── PortfolioAchievementsController.cls
-        │   └── PortfolioAchievementsController.cls-meta.xml
+        │   ├── PortfolioAchievementsController.cls-meta.xml
+        │   ├── LearningHubController.cls
+        │   └── LearningHubController.cls-meta.xml
         │
         ├── customMetadata/
         │   ├── Portfolio_Skill__mdt.*.md-meta.xml
         │   ├── Portfolio_Certification__mdt.*.md-meta.xml
-        │   └── Portfolio_Achievement__mdt.*.md-meta.xml
+        │   ├── Portfolio_Achievement__mdt.*.md-meta.xml
+        │   └── Learning_Material__mdt.*.md-meta.xml
         │
         └── objects/
             └── Portfolio_Request__c/
@@ -727,6 +737,140 @@ public with sharing class AccountWrapper {
 
 ---
 
+### 16. `learningHub`
+
+**Purpose:** A full-featured Learning Materials Hub that stores, categorises, and serves downloadable learning resources — guides, cheat sheets, interview prep, implementation docs, and more. Visitors can search, filter by category, sort, and download any resource directly. All data is managed via a `Learning_Material__mdt` Custom Metadata Type — no code changes needed to add new materials.
+
+#### Aesthetic
+**Stellar Archive** — deepest navy `#04060F` background with two concentric pulsing rings and a dot-grid overlay, creating a deep-space observatory atmosphere. `Cormorant Garamond` italic serif for the gradient hero title, `Plus Jakarta Sans` for all UI text, `Space Mono` for file metadata chips and monospace data. Each of the 10 categories has its own accent colour; the category colour drives the card top border, icon background tint, badge chip, and download button. This gives the page a lively, colour-coded "library shelf" feel while staying cohesive on the dark canvas.
+
+#### Prerequisites
+- Custom Metadata Type `Learning_Material__mdt` must be created (see field table below)
+- Apex class `LearningHubController` must be deployed
+- Guest User Profile must have **Apex Class Access** to `LearningHubController`
+- No Static Resources required
+
+> **Self-contained fallback:** The component ships with 30 pre-loaded static materials hardcoded in JS (`STATIC_MATERIALS` array). If the Apex wire call fails or the CMT has no records yet, the static data renders immediately — the component is fully usable out of the box without any Salesforce setup.
+
+#### Dependencies
+| Dependency | Purpose |
+|---|---|
+| `LearningHubController.cls` | Queries `Learning_Material__mdt` records via `@wire` |
+| `Learning_Material__mdt` | Stores all learning resource metadata |
+| Google Fonts: `Cormorant Garamond`, `Plus Jakarta Sans`, `Space Mono` | Stellar Archive typography |
+| Browser Clipboard / `<a href target="_blank">` | Download links |
+
+#### Custom Metadata Type: `Learning_Material__mdt`
+
+| Field Label | API Name | Type | Required | Notes |
+|---|---|---|---|---|
+| Title | `Title__c` | Text(255) | ✅ | Display title of the resource |
+| Description | `Description__c` | Long Text Area | ✅ | 2–4 sentence description shown on the card |
+| Category | `Category__c` | Text(100) | ✅ | Must match a category `id` from the JS CATEGORIES array |
+| Icon Emoji | `Icon_Emoji__c` | Text(10) | — | e.g. `📄`, `⚡`, `🔍` |
+| Difficulty | `Difficulty__c` | Picklist | — | `Beginner` \| `Intermediate` \| `Advanced` |
+| File Type | `File_Type__c` | Picklist | — | `PDF` \| `DOCX` \| `XLSX` \| `PPTX` \| `VIDEO` \| `LINK` \| `MD` |
+| File Size | `File_Size__c` | Text(20) | — | e.g. `2.3 MB` |
+| File URL | `File_URL__c` | URL | ✅ | Direct download URL or Salesforce File/CRM Content link |
+| Tags | `Tags__c` | Text(255) | — | Comma-separated tags e.g. `LWC,Events,Wire` |
+| Author | `Author__c` | Text(255) | — | Author name shown in card footer |
+| Download Count | `Download_Count__c` | Number(6,0) | — | Cumulative download count displayed on card |
+| Is Featured | `Is_Featured__c` | Checkbox | — | `true` = shown in the highlighted featured banner at top |
+| Is Active | `Is_Active__c` | Checkbox | ✅ | `false` = hidden from UI without deleting the record |
+| Sort Order | `Sort_Order__c` | Number(3,0) | — | Ascending display order within each category |
+
+#### Supported Categories
+
+| Category ID | Display Name | Icon | Accent Colour |
+|---|---|---|---|
+| `salescloud` | Sales Cloud | 💼 | `#0070D2` |
+| `servicecloud` | Service Cloud | 🛎 | `#00A1E0` |
+| `lwc` | LWC | ⚡ | `#7B2FFF` |
+| `apex` | Apex | 🔷 | `#032D60` |
+| `integration` | Integration | 🔗 | `#E8820C` |
+| `devops` | DevOps / Git | 🛠 | `#2B9A66` |
+| `admin` | Admin | 🛡 | `#C23934` |
+| `ai` | AI / Agentforce | 🤖 | `#9B59B6` |
+| `datacloud` | Data Cloud | 📊 | `#0D6EFD` |
+| `other` | Other Tools | 🔧 | `#6B7280` |
+
+#### Pre-loaded Static Materials (30 resources across all categories)
+
+| # | Title | Category | Type | Difficulty |
+|---|---|---|---|---|
+| 1 | Sales Cloud Implementation Guide | salescloud | PDF | Intermediate |
+| 2 | Sales Cloud Object Model Reference | salescloud | PDF | Beginner |
+| 3 | CPQ Configuration Cheat Sheet | salescloud | PDF | Advanced |
+| 4 | Service Cloud Complete Setup Guide | servicecloud | PDF | Intermediate |
+| 5 | Omni-Channel Routing Deep Dive | servicecloud | DOCX | Advanced |
+| 6 | LWC Interview Questions — Top 100 ⭐ | lwc | PDF | Intermediate |
+| 7 | LWC Component Communication Guide | lwc | PDF | Intermediate |
+| 8 | LWC Performance Optimisation Cookbook | lwc | PDF | Advanced |
+| 9 | LWC vs Aura: Migration Guide | lwc | DOCX | Intermediate |
+| 10 | Apex Governor Limits Quick Reference | apex | PDF | Beginner |
+| 11 | Apex Design Patterns Handbook | apex | PDF | Advanced |
+| 12 | Apex Interview Questions — Top 80 ⭐ | apex | PDF | Intermediate |
+| 13 | SOQL & SOSL Mastery Guide | apex | PDF | Intermediate |
+| 14 | Salesforce REST API Integration Guide | integration | PDF | Intermediate |
+| 15 | Platform Events & CDC Guide | integration | PDF | Advanced |
+| 16 | MuleSoft + Salesforce Integration Patterns | integration | DOCX | Advanced |
+| 17 | Git & GitHub Implementation Guide ⭐ | devops | PDF | Intermediate |
+| 18 | Salesforce DX (SFDX) Cheat Sheet | devops | PDF | Beginner |
+| 19 | GitHub Actions for Salesforce CI/CD | devops | PDF | Advanced |
+| 20 | Salesforce Admin Certification Study Guide | admin | PDF | Beginner |
+| 21 | Flow Builder Mastery Guide | admin | PDF | Intermediate |
+| 22 | Salesforce Security & Sharing Model Guide | admin | DOCX | Intermediate |
+| 23 | Agentforce Implementation Guide ⭐ | ai | PDF | Intermediate |
+| 24 | Einstein AI Features Reference | ai | PDF | Beginner |
+| 25 | Prompt Engineering for Salesforce AI | ai | PDF | Intermediate |
+| 26 | Data Cloud Architecture & Setup Guide | datacloud | PDF | Advanced |
+| 27 | Data Cloud Interview Questions | datacloud | PDF | Intermediate |
+| 28 | VS Code for Salesforce — Power User Guide | other | PDF | Beginner |
+| 29 | Postman for Salesforce API Testing | other | PDF | Beginner |
+| 30 | JIRA for Salesforce Project Management | other | DOCX | Beginner |
+
+> ⭐ = `Is_Featured__c = true` — these rotate in the featured banner at the top of the page.
+
+#### UI Features
+
+- **Search** — real-time filtering across title, description, tags, author, and category. Placeholder cycles through sample queries every 3.5 seconds.
+- **10 category filter tabs** — sticky at top with scrollable overflow for mobile. Each tab shows a live count badge. The active tab highlights in the category's accent colour.
+- **Sort modes** — Default order, A→Z alphabetical, by Category, or by Difficulty (Beginner first).
+- **Featured banner** — the first `Is_Featured__c = true` resource in the active filter renders as a large premium banner card above the grid (hidden during search/category filter).
+- **Material cards** — category-coloured top border, emoji icon, difficulty badge, description (3-line clamp), comma-separated tag chips, file type badge, file size, author, and colour-matched download button.
+- **Download counter** — each card shows cumulative download count as a floating badge. Clicking Download increments the local count.
+- **Pagination** — 9 cards per page, "Load more" button reveals the next page of results.
+- **Skeleton loader** — animated shimmer placeholders shown while the Apex wire resolves.
+- **Empty state** — friendly message with "Clear all filters" button when no results match.
+- **Fully responsive** — 3-column grid on desktop → 2-column on tablet → 1-column on mobile.
+
+#### How to Add a New Learning Material (No Code Required)
+1. Setup → Custom Metadata Types → **Learning Material** → Manage Records → **New**
+2. Fill in: Title, Description, Category (must match a category ID), File URL
+3. Set `Is_Active__c = true`
+4. Optionally set `Is_Featured__c = true` to show in the featured banner
+5. Save — the component picks it up on the next page load
+
+#### Hosting Files on Salesforce (Recommended)
+To host the actual downloadable files on Salesforce:
+1. **Files / ContentVersion:** Upload the file via Salesforce Files. Get the public download URL:
+   `https://[yourorg].my.salesforce.com/sfc/p/[suffix]/a/[recordId]/[hash]`
+2. **Static Resources:** For files that don't change, upload as a Static Resource and use `@salesforce/resourceUrl/YourResourceName` in Apex to build the URL. Pass it into `File_URL__c`.
+3. **External hosting:** You can also set `File_URL__c` to any external URL (Google Drive, SharePoint, S3 with public access, etc.)
+
+#### Manual Steps
+1. Create `Learning_Material__mdt` in Setup with all 14 fields
+2. Add `Difficulty__c` picklist values: `Beginner`, `Intermediate`, `Advanced`
+3. Add `File_Type__c` picklist values: `PDF`, `DOCX`, `XLSX`, `PPTX`, `VIDEO`, `LINK`, `MD`
+4. Insert records via Manage Records (or skip — the static JS data renders immediately)
+5. Deploy `LearningHubController.cls`
+6. Grant Guest User Profile Apex Class access to `LearningHubController`
+7. Deploy the LWC component (4 files)
+8. Create a **Learning Hub** page in Experience Builder
+9. Drag `learningHub` onto the page and publish
+
+---
+
 ## 🚀 Deployment Guide
 
 ### Deploy All at Once
@@ -755,6 +899,7 @@ Step 1 — Apex Classes
    PortfolioSkillsController
    SubmitRequestController
    PortfolioAchievementsController
+   LearningHubController
 
 Step 2 — Custom Objects
    Portfolio_Request__c
@@ -763,6 +908,7 @@ Step 3 — Custom Metadata Types
    Portfolio_Skill__mdt
    Portfolio_Certification__mdt
    Portfolio_Achievement__mdt
+   Learning_Material__mdt
 
 Step 4 — LWC Child Tools  ← must come BEFORE devToolsHub
    soqlBuilder
@@ -773,6 +919,7 @@ Step 5 — All Other LWC Components
    portfolioHero, portfolioProjects, portfolioGames, portfolioSkillsCerts
    memoryMatch, soqlSnake, sfQuiz, trailheadTrivia
    submitRequest, portfolioAgentWidget, portfolioAchievements
+   learningHub
 
 Step 6 — LWC Hub  ← must come AFTER its child tools
    devToolsHub
@@ -823,6 +970,15 @@ Step 7 — Static Resources (upload via Salesforce UI)
 4. Add `Category__c` picklist values: `Award`, `Certificate`, `Goodie` (exact capitalisation)
 5. Manage Records → add records, set `Is_Active__c = true` on each
 
+### Create `Learning_Material__mdt`
+1. Setup → Custom Metadata Types → New
+2. Label: `Learning Material` · Plural: `Learning Materials` · API Name: `Learning_Material__mdt`
+3. Add all 14 fields from the [learningHub](#16-learninghub) field table
+4. Add `Difficulty__c` picklist values: `Beginner`, `Intermediate`, `Advanced`
+5. Add `File_Type__c` picklist values: `PDF`, `DOCX`, `XLSX`, `PPTX`, `VIDEO`, `LINK`, `MD`
+6. Manage Records → add your resources (or skip — the component renders static demo data immediately)
+7. Set `Is_Active__c = true` on every record to display, `Is_Featured__c = true` for the featured banner
+
 > 💡 Metadata records can also be deployed via CLI using XML files in `force-app/main/default/customMetadata/`.
 
 ---
@@ -843,6 +999,7 @@ Setup → Digital Experiences → All Sites → **[Your Site]** → Workspaces �
 | Apex: `PortfolioSkillsController` | Apex Class Access | Skills/Certs data |
 | Apex: `SubmitRequestController` | Apex Class Access | Form submission |
 | Apex: `PortfolioAchievementsController` | Apex Class Access | Achievements data |
+| Apex: `LearningHubController` | Apex Class Access | Learning materials data |
 | Messaging for Web | Connected Apps | Agentforce chat |
 
 ---
@@ -922,6 +1079,21 @@ Setup → Security → CSP Trusted Sites → New. Check **all Allow** checkboxes
 ### Deploy fails: `Entity of type Metadata is not available`
 - Experience Cloud may not be enabled in the target org
 - Set `"sourceApiVersion": "59.0"` in `sfdx-project.json`
+
+### Learning Hub — no materials showing (blank grid)
+- The component falls back to 30 static materials if Apex fails — if even those are missing, check browser Console for JS errors
+- Confirm Guest User Profile has Apex Class access to `LearningHubController`
+- Open browser DevTools → Network → look for a 401/403 on the `getMaterials` wire call
+- Check `Learning_Material__mdt` records have `Is_Active__c = true`
+
+### Learning Hub — Apex returns data but cards are empty
+- Confirm the metadata record `Category__c` field value matches exactly one of the 10 category IDs in the JS `CATEGORIES` array (`salescloud`, `servicecloud`, `lwc`, `apex`, `integration`, `devops`, `admin`, `ai`, `datacloud`, `other`)
+- Check `File_URL__c` is a valid URL (including `http://` or `https://`)
+
+### Learning Hub — download button doesn't work
+- If `File_URL__c` is set to a Salesforce File URL, confirm the Guest User has access to the ContentDocument record via sharing rules or a public link
+- For Static Resources used as file hosts, ensure Cache Control = **Public** on the resource
+- For external URLs (Google Drive, S3, etc.), ensure the URL is a direct download link rather than a sharing/preview page
 
 ---
 

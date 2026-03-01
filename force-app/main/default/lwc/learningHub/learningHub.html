@@ -1,0 +1,276 @@
+<template>
+    <div class="lh-root">
+
+        <!-- ░░ BACKGROUND TEXTURE ░░ -->
+        <div class="lh-bg" aria-hidden="true">
+            <div class="bg-dots"></div>
+            <div class="bg-ring bg-ring-1"></div>
+            <div class="bg-ring bg-ring-2"></div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             HERO HEADER
+        ══════════════════════════════════════ -->
+        <header class="lh-hero">
+            <div class="hero-eyebrow">
+                <span class="eyebrow-dot" aria-hidden="true"></span>
+                <span>Salesforce Knowledge Hub</span>
+            </div>
+
+            <h1 class="hero-title">
+                Learning <em class="title-italic">Materials</em>
+            </h1>
+
+            <p class="hero-sub">
+                Curated guides, cheat sheets, interview prep, and implementation docs
+                across every Salesforce cloud and developer tool.
+                Download anything. Learn everything.
+            </p>
+
+            <!-- Search bar -->
+            <div class="search-shell">
+                <span class="search-ico" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                        <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.7"/>
+                        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+                    </svg>
+                </span>
+                <input
+                    type="search"
+                    class="search-input"
+                    placeholder={searchPlaceholder}
+                    value={searchTerm}
+                    oninput={onSearch}
+                    aria-label="Search learning materials"
+                />
+                <template lwc:if={searchTerm}>
+                    <button class="search-clear" onclick={clearSearch} aria-label="Clear search">×</button>
+                </template>
+            </div>
+
+            <!-- Stats strip -->
+            <div class="hero-stats">
+                <template for:each={heroStats} for:item="s">
+                    <div key={s.id} class="hstat">
+                        <span class="hstat-val">{s.val}</span>
+                        <span class="hstat-lbl">{s.lbl}</span>
+                    </div>
+                </template>
+            </div>
+        </header>
+
+        <!-- ══════════════════════════════════════
+             CATEGORY FILTER TABS (sticky)
+        ══════════════════════════════════════ -->
+        <nav class="lh-nav" aria-label="Filter by category">
+            <div class="nav-scroll">
+                <template for:each={categoryTabs} for:item="cat">
+                    <button
+                        key={cat.id}
+                        class={cat.btnClass}
+                        data-cat={cat.id}
+                        onclick={onCatSelect}
+                        aria-pressed={cat.isActive}
+                        style={cat.btnStyle}
+                    >
+                        <span class="cat-ico" aria-hidden="true">{cat.icon}</span>
+                        <span class="cat-lbl">{cat.name}</span>
+                        <span class="cat-cnt" style={cat.cntStyle}>{cat.count}</span>
+                    </button>
+                </template>
+            </div>
+        </nav>
+
+        <!-- ══════════════════════════════════════
+             RESULTS META BAR
+        ══════════════════════════════════════ -->
+        <div class="lh-bar">
+            <span class="bar-count">
+                <template lwc:if={hasResults}>
+                    <strong>{filteredCount}</strong>&nbsp;resource{pluralS} found
+                </template>
+            </span>
+            <div class="sort-group">
+                <label class="sort-lbl" for="lh-sort">Sort</label>
+                <div class="sel-wrap">
+                    <select id="lh-sort" class="sort-sel" onchange={onSortChange} aria-label="Sort order">
+                        <option value="default">Default</option>
+                        <option value="alpha">A → Z</option>
+                        <option value="category">Category</option>
+                        <option value="difficulty">Difficulty</option>
+                    </select>
+                    <span class="sel-chev" aria-hidden="true">▾</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════════════════════════
+             FEATURED BANNER
+        ══════════════════════════════════════ -->
+        <template lwc:if={showFeatured}>
+            <section class="lh-featured" aria-label="Featured resource" style={featuredBorderStyle}>
+                <div class="feat-tag-row">
+                    <span class="feat-star-badge">⭐ Featured Resource</span>
+                </div>
+                <div class="feat-layout">
+
+                    <div class="feat-info">
+                        <div class="feat-chips">
+                            <span class="chip chip-cat" style={featCatStyle}>{featuredItem.catLabel}</span>
+                            <span class={featuredItem.diffClass}>{featuredItem.difficulty}</span>
+                            <span class="chip chip-type">{featuredItem.fileType}</span>
+                        </div>
+                        <h2 class="feat-title">{featuredItem.title}</h2>
+                        <p class="feat-desc">{featuredItem.description}</p>
+                        <div class="feat-tags-row">
+                            <template for:each={featuredItem.tagList} for:item="t">
+                                <span key={t} class="tag">{t}</span>
+                            </template>
+                        </div>
+                    </div>
+
+                    <div class="feat-side">
+                        <div class="feat-icon-ring" style={featIconRingStyle}>
+                            <span class="feat-icon">{featuredItem.icon}</span>
+                        </div>
+                        <div class="feat-file-meta">
+                            <span class="feat-ftype">{featuredItem.fileType}</span>
+                            <template lwc:if={featuredItem.fileSize}>
+                                <span class="feat-fsize">{featuredItem.fileSize}</span>
+                            </template>
+                        </div>
+                        <a
+                            href={featuredItem.fileUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="feat-dl-btn"
+                            style={featDlBtnStyle}
+                            onclick={onDownload}
+                            data-id={featuredItem.id}
+                        >
+                            <span aria-hidden="true">↓</span>&nbsp;Download
+                        </a>
+                        <span class="feat-dl-cnt">{featuredItem.downloads} downloads</span>
+                    </div>
+
+                </div>
+            </section>
+        </template>
+
+        <!-- ══════════════════════════════════════
+             MATERIALS GRID
+        ══════════════════════════════════════ -->
+        <main class="lh-grid" role="main">
+
+            <!-- Skeleton loader -->
+            <template lwc:if={isLoading}>
+                <template for:each={skeletonList} for:item="sk">
+                    <div key={sk} class="card-skel">
+                        <div class="skel skel-bar"></div>
+                        <div class="skel skel-ico"></div>
+                        <div class="skel skel-t1"></div>
+                        <div class="skel skel-t2"></div>
+                        <div class="skel skel-t3"></div>
+                        <div class="skel skel-ft"></div>
+                    </div>
+                </template>
+            </template>
+
+            <!-- Material cards -->
+            <template lwc:if={hasResults}>
+                <template for:each={displayedMaterials} for:item="m">
+                    <article key={m.id} class={m.cardClass} style={m.cardStyle}>
+
+                        <!-- Top colour stripe -->
+                        <div class="card-stripe" style={m.stripeStyle}></div>
+
+                        <!-- Head: icon + badges -->
+                        <div class="card-head">
+                            <div class="card-icon-wrap" style={m.iconWrapStyle}>
+                                <span class="card-icon" aria-hidden="true">{m.icon}</span>
+                            </div>
+                            <div class="card-badge-row">
+                                <span class="chip chip-cat" style={m.catChipStyle}>{m.catLabel}</span>
+                                <span class={m.diffClass}>{m.difficulty}</span>
+                            </div>
+                        </div>
+
+                        <!-- Title + description -->
+                        <div class="card-body">
+                            <h3 class="card-title">{m.title}</h3>
+                            <p class="card-desc">{m.description}</p>
+                        </div>
+
+                        <!-- Tag chips -->
+                        <template lwc:if={m.hasTags}>
+                            <div class="card-tags">
+                                <template for:each={m.tagList} for:item="t">
+                                    <span key={t} class="tag">{t}</span>
+                                </template>
+                            </div>
+                        </template>
+
+                        <!-- Footer: file info + download button -->
+                        <div class="card-foot">
+                            <div class="card-finfo">
+                                <span class="fi-type" style={m.typeStyle}>{m.fileType}</span>
+                                <template lwc:if={m.fileSize}>
+                                    <span class="fi-size">{m.fileSize}</span>
+                                </template>
+                                <template lwc:if={m.author}>
+                                    <span class="fi-sep" aria-hidden="true">·</span>
+                                    <span class="fi-author">{m.author}</span>
+                                </template>
+                            </div>
+                            <a
+                                href={m.fileUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="card-dl-btn"
+                                style={m.dlBtnStyle}
+                                onclick={onDownload}
+                                data-id={m.id}
+                                aria-label="Download {m.title}"
+                            >
+                                <span aria-hidden="true">↓</span>&nbsp;Download
+                            </a>
+                        </div>
+
+                        <!-- Download counter bubble -->
+                        <template lwc:if={m.downloads}>
+                            <div class="dl-bubble" aria-label={m.dlLabel}>{m.downloads}</div>
+                        </template>
+
+                    </article>
+                </template>
+            </template>
+
+            <!-- Empty state -->
+            <template lwc:if={noResults}>
+                <div class="lh-empty">
+                    <span class="empty-ico" aria-hidden="true">🔍</span>
+                    <p class="empty-title">No materials found</p>
+                    <p class="empty-hint">Try a different keyword or browse another category</p>
+                    <button class="empty-reset" onclick={resetFilters}>Clear all filters</button>
+                </div>
+            </template>
+
+        </main>
+
+        <!-- Load more -->
+        <template lwc:if={showLoadMore}>
+            <div class="lh-more">
+                <button class="more-btn" onclick={loadMore}>
+                    Load more
+                    <span class="more-rem">({remainingCount} remaining)</span>
+                </button>
+            </div>
+        </template>
+
+        <!-- Footer -->
+        <footer class="lh-footer">
+            <span>📚 Knowledge Hub &nbsp;·&nbsp; {totalCount} resources &nbsp;·&nbsp; All formats</span>
+        </footer>
+
+    </div>
+</template>
