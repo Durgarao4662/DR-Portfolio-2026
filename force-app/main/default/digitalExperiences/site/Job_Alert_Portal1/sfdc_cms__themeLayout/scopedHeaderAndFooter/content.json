@@ -12,18 +12,34 @@
         "children" : [ {
           "attributes" : {
             "backgroundImageConfig" : "",
-            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "backgroundImageOverlay" : "rgba(45, 118, 223, 0)",
             "componentSpacerSize" : "",
             "layoutDirectionDesktop" : "row",
             "layoutDirectionMobile" : "column",
             "layoutDirectionTablet" : "column",
             "maxContentWidth" : "",
             "sectionColumnGutterWidth" : "",
-            "sectionConfig" : "{\"UUID\":\"0c636b02-85f8-4055-92e6-2a02584c4303\",\"columns\":[{\"UUID\":\"e5d18c31-fe47-41ad-9619-cc1552ebd9a4\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+            "sectionConfig" : "{\"UUID\":\"0c636b02-85f8-4055-92e6-2a02584c4303\",\"columns\":[{\"UUID\":\"c104b895-82f9-4b72-aa79-632ffccd4cbb\",\"columnName\":\"Column 1\",\"columnKey\":\"04cbe\",\"columnWidth\":\"1\",\"seedComponents\":[]},{\"UUID\":\"d79826b1-548b-4109-93ba-9b01cea448f0\",\"columnName\":\"Column 2\",\"columnKey\":\"fa8f9\",\"columnWidth\":\"11\",\"seedComponents\":[]}]}",
             "sectionMinHeight" : "",
             "sectionVerticalAlign" : "flex-start"
           },
           "children" : [ {
+            "children" : [ {
+              "attributes" : {
+                "alignment" : "left",
+                "imageInfo" : "",
+                "imageInfoMobile" : "",
+                "logoWidth" : 84
+              },
+              "definition" : "dxp_content_layout:siteLogo",
+              "id" : "0d06875a-0309-417f-ab48-377e8ed6b223",
+              "type" : "component"
+            } ],
+            "id" : "c104b895-82f9-4b72-aa79-632ffccd4cbb",
+            "name" : "04cbe",
+            "title" : "Column 1",
+            "type" : "region"
+          }, {
             "children" : [ {
               "attributes" : {
                 "dxpStyle" : {
@@ -63,7 +79,6 @@
                     "itemBackgroundHoverColor" : "rgba(255, 255, 255, 0)",
                     "lineHeightOverride" : "",
                     "menuHorizontalAlignment" : "left",
-                    "navigationMenuEditor" : "Default_Navigation",
                     "overrideTextStyle" : false,
                     "showHomeLink" : true,
                     "showParentMenuIcon" : true,
@@ -72,10 +87,10 @@
                     "textStyle" : "body-regular"
                   },
                   "definition" : "community_navigation:customizableNavigationBarContainer",
-                  "id" : "e3dd811e-685f-485a-88be-b974e8d5fc50",
+                  "id" : "decbbee0-15ea-49f5-98f3-2c7b94ec88f0",
                   "type" : "component"
                 } ],
-                "id" : "76dd101a-ef28-43b0-90ec-07cc3c9f6a43",
+                "id" : "1291affa-a19c-40c0-b11e-a62d03e29755",
                 "name" : "desktop",
                 "title" : "Desktop View",
                 "type" : "region"
@@ -104,21 +119,21 @@
                     "showHomeLink" : true
                   },
                   "definition" : "community_navigation:customizableNavigationHamburgerMenuContainer",
-                  "id" : "fa4191ea-dbc5-435b-a091-b9e74ef57c28",
+                  "id" : "df5e3188-6e71-4578-bdcf-85294be7d2c3",
                   "type" : "component"
                 } ],
-                "id" : "9d790fcf-dc03-416d-81ce-498ab96484ff",
+                "id" : "c7074371-4cdb-4f35-a76b-1504e05578e7",
                 "name" : "mobile",
                 "title" : "Mobile View",
                 "type" : "region"
               } ],
               "definition" : "community_navigation:customizableNavigationMenu",
-              "id" : "4a2dca5c-4afd-4d27-a950-aae2cc7e3f3e",
+              "id" : "a2d80f52-66c2-496b-b5c2-9fee737d479a",
               "type" : "component"
             } ],
-            "id" : "e5d18c31-fe47-41ad-9619-cc1552ebd9a4",
-            "name" : "col1",
-            "title" : "Column 1",
+            "id" : "d79826b1-548b-4109-93ba-9b01cea448f0",
+            "name" : "fa8f9",
+            "title" : "Column 2",
             "type" : "region"
           } ],
           "definition" : "community_layout:section",
@@ -131,6 +146,45 @@
         "type" : "region"
       }, {
         "children" : [ {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"28b4619b-4648-493c-81e0-1c9e698fe8a8\",\"columns\":[{\"UUID\":\"2a6ff29f-7830-44c4-946a-a8cc6a349e72\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"4\",\"seedComponents\":[]},{\"UUID\":\"0d9a9af2-285c-4833-9f17-b45ffd0e0f64\",\"columnName\":\"Column 2\",\"columnKey\":\"5af6e\",\"columnWidth\":\"4\",\"seedComponents\":[]},{\"UUID\":\"d8965648-c750-48fd-a4bb-d0611dc75f3a\",\"columnName\":\"Column 3\",\"columnKey\":\"f628b\",\"columnWidth\":\"4\",\"seedComponents\":[]}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : { },
+              "definition" : "c:submitRequest",
+              "id" : "db3af895-4198-42d5-b809-856f4f0227e1",
+              "type" : "component"
+            } ],
+            "id" : "2a6ff29f-7830-44c4-946a-a8cc6a349e72",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          }, {
+            "id" : "0d9a9af2-285c-4833-9f17-b45ffd0e0f64",
+            "name" : "5af6e",
+            "title" : "Column 2",
+            "type" : "region"
+          }, {
+            "id" : "d8965648-c750-48fd-a4bb-d0611dc75f3a",
+            "name" : "f628b",
+            "title" : "Column 3",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "28b4619b-4648-493c-81e0-1c9e698fe8a8",
+          "type" : "component"
+        }, {
           "attributes" : {
             "backgroundImageConfig" : "",
             "backgroundImageOverlay" : "rgba(0,0,0,0)",

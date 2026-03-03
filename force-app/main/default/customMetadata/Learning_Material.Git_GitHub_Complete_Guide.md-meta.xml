@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomMetadata xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <label>Git GitHub Complete Guide</label>
+    <protected>false</protected>
+    <values>
+        <field>Author__c</field>
+        <value xsi:type="xsd:string">Durgarao Telagareddy</value>
+    </values>
+    <values>
+        <field>Category__c</field>
+        <value xsi:type="xsd:string">devops</value>
+    </values>
+    <values>
+        <field>Description__c</field>
+        <value xsi:type="xsd:string">This comprehensive guide is designed to help beginners and professionals understand Git and GitHub from scratch to advanced level. It covers fundamental concepts like version control, repositories, commits, branches, and merging, along with practical workflows used in real-world projects.</value>
+    </values>
+    <values>
+        <field>Difficulty__c</field>
+        <value xsi:type="xsd:string">Beginner</value>
+    </values>
+    <values>
+        <field>Download_Count__c</field>
+        <value xsi:nil="true"/>
+    </values>
+    <values>
+        <field>File_Size__c</field>
+        <value xsi:type="xsd:string">72KB</value>
+    </values>
+    <values>
+        <field>File_Type__c</field>
+        <value xsi:type="xsd:string">PDF</value>
+    </values>
+    <values>
+        <field>File_URL__c</field>
+        <value xsi:type="xsd:string">https://drive.google.com/uc?export=download&amp;id=1-YvQjfD6bkfAeSQJETwjlYJp18XtxK5W</value>
+    </values>
+    <values>
+        <field>Icon_Emoji__c</field>
+        <value xsi:type="xsd:string">🧰</value>
+    </values>
+    <values>
+        <field>Is_Active__c</field>
+        <value xsi:type="xsd:boolean">true</value>
+    </values>
+    <values>
+        <field>Is_Featured__c</field>
+        <value xsi:type="xsd:boolean">false</value>
+    </values>
+    <values>
+        <field>Sort_Order__c</field>
+        <value xsi:type="xsd:double">1.0</value>
+    </values>
+    <values>
+        <field>Tags__c</field>
+        <value xsi:type="xsd:string">Git,GitHub,CI/CD</value>
+    </values>
+    <values>
+        <field>Title__c</field>
+        <value xsi:type="xsd:string">Git GitHub Complete Guide</value>
+    </values>
+</CustomMetadata>

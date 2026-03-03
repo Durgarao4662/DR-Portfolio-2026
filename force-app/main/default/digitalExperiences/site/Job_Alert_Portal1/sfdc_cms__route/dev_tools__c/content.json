@@ -1,0 +1,12 @@
+{
+  "type" : "sfdc_cms__route",
+  "title" : "Dev Tools",
+  "contentBody" : {
+    "activeViewId" : "Dev_Tools",
+    "configurationTags" : [ ],
+    "pageAccess" : "UseParent",
+    "routeType" : "custom-dev-tools",
+    "urlPrefix" : "dev-tools"
+  },
+  "urlName" : "dev-tools"
+}

@@ -21,6 +21,8 @@ const CATEGORIES = [
     { id: 'admin',        name: 'Admin',            icon: '🛡️', color: '#B91C1C' },
     { id: 'ai',           name: 'AI / Agentforce',  icon: '🤖', color: '#7E22CE' },
     { id: 'datacloud',    name: 'Data Cloud',       icon: '📊', color: '#1D4ED8' },
+    { id: 'experiencecloud', name: 'Experience Cloud',icon: '🌨️', color: '#660853' },
+    { id: 'b2bcloud', name: 'B2B Commerce Cloud',   icon: '🛒', color: '#b60859' },
     { id: 'other',        name: 'Other Tools',      icon: '🔧', color: '#4B5563' },
 ];
 

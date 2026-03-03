@@ -68,6 +68,35 @@
           "definition" : "community_layout:section",
           "id" : "0e193645-d89f-42ec-ac3b-fa8f9c279a51",
           "type" : "component"
+        }, {
+          "attributes" : {
+            "backgroundImageConfig" : "",
+            "backgroundImageOverlay" : "rgba(0,0,0,0)",
+            "componentSpacerSize" : "",
+            "layoutDirectionDesktop" : "row",
+            "layoutDirectionMobile" : "column",
+            "layoutDirectionTablet" : "column",
+            "maxContentWidth" : "",
+            "sectionColumnGutterWidth" : "",
+            "sectionConfig" : "{\"UUID\":\"3202ee8b-ce20-4f2c-83a5-c33ea3dab0b9\",\"columns\":[{\"UUID\":\"e5925c25-d6b0-404f-8f27-55a13d0d55f9\",\"columnName\":\"Column 1\",\"columnKey\":\"col1\",\"columnWidth\":\"12\",\"seedComponents\":[]}]}",
+            "sectionMinHeight" : "",
+            "sectionVerticalAlign" : "flex-start"
+          },
+          "children" : [ {
+            "children" : [ {
+              "attributes" : { },
+              "definition" : "c:portfolioAchievements",
+              "id" : "aa7be87a-ec97-4699-b553-7940703ca7b8",
+              "type" : "component"
+            } ],
+            "id" : "e5925c25-d6b0-404f-8f27-55a13d0d55f9",
+            "name" : "col1",
+            "title" : "Column 1",
+            "type" : "region"
+          } ],
+          "definition" : "community_layout:section",
+          "id" : "3202ee8b-ce20-4f2c-83a5-c33ea3dab0b9",
+          "type" : "component"
         } ],
         "id" : "2eadd88b-572a-4b16-a159-d988d7da5e9b",
         "name" : "content",
